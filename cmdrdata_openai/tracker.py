@@ -4,6 +4,7 @@ Usage tracking client for sending events to cmdrdata backend
 
 import asyncio
 import logging
+import random
 import time
 import uuid
 from concurrent.futures import ThreadPoolExecutor
@@ -210,7 +211,7 @@ class UsageTracker:
             "timestamp": int((timestamp or datetime.utcnow()).timestamp()),
             "version": "0.1.0",
         }
-        
+
         # Add analytics data
         analytics_data = self._build_analytics_data(
             request_start_time,
@@ -224,7 +225,7 @@ class UsageTracker:
             retry_count,
             time_to_first_token_ms,
         )
-        
+
         event_data = {**base_data, **analytics_data}
 
         try:
@@ -389,7 +390,7 @@ class UsageTracker:
             "timestamp": int((timestamp or datetime.utcnow()).timestamp()),
             "version": "0.1.0",
         }
-        
+
         # Add analytics data
         analytics_data = self._build_analytics_data(
             request_start_time,
@@ -403,54 +404,112 @@ class UsageTracker:
             retry_count,
             time_to_first_token_ms,
         )
-        
+
         return {**base_data, **analytics_data}
 
     def _track_usage_with_retry(self, event_data: Dict[str, Any]) -> bool:
-        """Track usage with retry logic"""
-        try:
-            if httpx:
-                with httpx.Client(timeout=self.timeout) as client:
-                    response = client.post(
-                        self.endpoint, json=event_data, headers=self.headers
-                    )
+        """Track usage with exponential backoff retry logic"""
+        last_exception = None
+        for attempt in range(self.max_retries + 1):
+            try:
+                if httpx:
+                    with httpx.Client(timeout=self.timeout) as client:
+                        response = client.post(
+                            self.endpoint, json=event_data, headers=self.headers
+                        )
 
+                        if response.status_code == 200:
+                            return True
+                        # Retry on server errors (5xx) and rate limiting (429)
+                        elif response.status_code >= 500 or response.status_code == 429:
+                            last_exception = NetworkError(
+                                f"Server error: {response.status_code}"
+                            )
+                            logger.warning(
+                                f"Attempt {attempt + 1} failed: {last_exception}"
+                            )
+                        # Do not retry on other client errors (4xx)
+                        elif response.status_code >= 400:
+                            raise TrackingError(
+                                f"Client error: {response.status_code} {response.text}"
+                            )
+                        else:
+                            return False  # Should not happen, but for completeness
+                else:
+                    # Fallback to requests
+                    import requests
+
+                    response = requests.post(
+                        self.endpoint,
+                        json=event_data,
+                        headers=self.headers,
+                        timeout=self.timeout,
+                    )
                     if response.status_code == 200:
                         return True
-                    elif response.status_code == 429:
-                        raise NetworkError("Rate limited")
-                    elif response.status_code >= 500:
-                        raise NetworkError("Server error")
+                    elif response.status_code >= 500 or response.status_code == 429:
+                        last_exception = NetworkError(
+                            f"Server error: {response.status_code}"
+                        )
+                        logger.warning(
+                            f"Attempt {attempt + 1} failed: {last_exception}"
+                        )
                     elif response.status_code >= 400:
-                        raise TrackingError("Client error")
+                        raise TrackingError(
+                            f"Client error: {response.status_code} {response.text}"
+                        )
                     else:
                         return False
-            else:
-                # Fallback to requests
-                import requests
 
-                response = requests.post(
-                    self.endpoint,
-                    json=event_data,
-                    headers=self.headers,
-                    timeout=self.timeout,
-                )
-
-                if response.status_code == 200:
-                    return True
-                elif response.status_code == 429:
-                    raise NetworkError("Rate limited")
-                elif response.status_code >= 500:
-                    raise NetworkError("Server error")
-                elif response.status_code >= 400:
-                    raise TrackingError("Client error")
+            except NetworkError as e:
+                last_exception = e
+                logger.warning(f"Attempt {attempt + 1} failed with network error: {e}")
+            except TrackingError:
+                # Re-raise tracking errors (like client errors) immediately
+                raise
+            except Exception as e:
+                # Handle httpx.RequestError or requests.exceptions.RequestException
+                handled = False
+                if httpx:
+                    try:
+                        if hasattr(httpx, "RequestError") and isinstance(
+                            e, httpx.RequestError
+                        ):
+                            last_exception = e
+                            logger.warning(
+                                f"Attempt {attempt + 1} failed with network error: {e}"
+                            )
+                            handled = True
+                    except AttributeError:
+                        pass
                 else:
-                    return False
+                    try:
+                        import requests
 
-        except Exception as e:
-            if "Connection" in str(e) or "Network" in str(e):
-                raise TrackingError("Tracking failed")
-            raise
+                        if isinstance(e, requests.exceptions.RequestException):
+                            last_exception = e
+                            logger.warning(
+                                f"Attempt {attempt + 1} failed with network error: {e}"
+                            )
+                            handled = True
+                    except ImportError:
+                        pass
+
+                if not handled:
+                    raise
+
+            # Exponential backoff with jitter
+            if attempt < self.max_retries:
+                backoff_time = (2**attempt) + (random.uniform(0, 1))
+                logger.debug(f"Retrying in {backoff_time:.2f} seconds...")
+                time.sleep(backoff_time)
+
+        logger.error(
+            f"All {self.max_retries + 1} tracking attempts failed. Last error: {last_exception}"
+        )
+        raise TrackingError(
+            "Tracking failed after multiple retries"
+        ) from last_exception
 
     def _build_analytics_data(
         self,
@@ -467,7 +526,7 @@ class UsageTracker:
     ) -> Dict[str, Any]:
         """Build analytics data for enhanced tracking"""
         analytics_data = {}
-        
+
         # Latency data
         if request_start_time is not None or request_end_time is not None:
             latency_data = {}
@@ -476,29 +535,33 @@ class UsageTracker:
             if request_end_time is not None:
                 latency_data["request_end_time"] = int(request_end_time)
             if request_start_time is not None and request_end_time is not None:
-                latency_data["duration_ms"] = int((request_end_time - request_start_time) * 1000)
+                latency_data["duration_ms"] = int(
+                    (request_end_time - request_start_time) * 1000
+                )
             if time_to_first_token_ms is not None:
                 latency_data["time_to_first_token_ms"] = time_to_first_token_ms
             analytics_data["latency"] = latency_data
-        
+
         # Error data
         error_data = {
             "occurred": error_occurred if error_occurred is not None else False,
             "type": error_type,
             "code": error_code,
-            "message": error_message[:500] if error_message else None  # Truncate long messages
+            "message": (
+                error_message[:500] if error_message else None
+            ),  # Truncate long messages
         }
         analytics_data["error"] = error_data
-        
+
         # Request data
         request_data = {
             "id": request_id or str(uuid.uuid4()),
             "streaming": streaming if streaming is not None else False,
             "retry_count": retry_count if retry_count is not None else 0,
-            "success": not (error_occurred if error_occurred is not None else False)
+            "success": not (error_occurred if error_occurred is not None else False),
         }
         analytics_data["request"] = request_data
-        
+
         return analytics_data
 
     def get_health_status(self) -> Dict[str, Any]:

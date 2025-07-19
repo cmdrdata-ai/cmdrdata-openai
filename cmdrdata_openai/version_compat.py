@@ -46,8 +46,16 @@ class VersionCompatibility:
         "min": "1.0.0",
         "max": "2.0.0",  # Updated for latest versions
         "tested": [
-            "1.0.0", "1.10.0", "1.20.0", "1.30.0", "1.40.0", 
-            "1.50.0", "1.51.0", "1.52.0", "1.53.0", "1.54.0"
+            "1.0.0",
+            "1.10.0",
+            "1.20.0",
+            "1.30.0",
+            "1.40.0",
+            "1.50.0",
+            "1.51.0",
+            "1.52.0",
+            "1.53.0",
+            "1.54.0",
         ],
         "latest_tested": "1.54.0",
     }
@@ -96,7 +104,10 @@ class VersionCompatibility:
                 stacklevel=3,
             )
         # Only warn for significantly older untested versions, not newer ones
-        elif current < version.parse("1.40.0") and str(current) not in self.SUPPORTED_OPENAI_VERSIONS["tested"]:
+        elif (
+            current < version.parse("1.40.0")
+            and str(current) not in self.SUPPORTED_OPENAI_VERSIONS["tested"]
+        ):
             warnings.warn(
                 f"cmdrdata-openai: OpenAI SDK version {self.openai_version} has not been fully tested. "
                 f"Latest tested version: {self.SUPPORTED_OPENAI_VERSIONS['latest_tested']}. "

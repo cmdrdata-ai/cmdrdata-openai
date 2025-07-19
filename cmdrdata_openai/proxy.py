@@ -113,7 +113,7 @@ class TrackedProxy:
 
             # Generate request ID for tracking
             request_id = str(uuid.uuid4())
-            
+
             # Start timing
             start_time = time.time()
             end_time = None
@@ -122,7 +122,7 @@ class TrackedProxy:
             error_code = None
             error_message = None
             retry_count = 0
-            
+
             # Detect if this is a streaming request
             streaming = kwargs.get("stream", False)
             time_to_first_token_ms = None
@@ -163,10 +163,10 @@ class TrackedProxy:
             except Exception as e:
                 end_time = time.time()
                 error_occurred = True
-                
+
                 # Categorize error types
                 error_message = str(e)
-                if hasattr(e, 'status_code'):
+                if hasattr(e, "status_code"):
                     error_code = str(e.status_code)
                     if e.status_code == 429:
                         error_type = "rate_limit"
@@ -184,7 +184,7 @@ class TrackedProxy:
                     error_type = "connection_error"
                 else:
                     error_type = "unknown_error"
-                
+
                 # Track the error if usage tracking is enabled
                 if track_usage:
                     try:
@@ -209,8 +209,10 @@ class TrackedProxy:
                             time_to_first_token_ms=time_to_first_token_ms,
                         )
                     except Exception as track_error:
-                        logger.warning(f"Failed to track error for {method_name}: {track_error}")
-                
+                        logger.warning(
+                            f"Failed to track error for {method_name}: {track_error}"
+                        )
+
                 # Log the error but re-raise it unchanged
                 logger.debug(f"Method {method_name} failed: {e}")
                 raise
@@ -232,12 +234,12 @@ class TrackedProxy:
 
 
 def track_chat_completion(
-    result, 
-    customer_id, 
-    tracker, 
-    method_name, 
-    args, 
-    kwargs, 
+    result,
+    customer_id,
+    tracker,
+    method_name,
+    args,
+    kwargs,
     custom_metadata=None,
     # Enhanced tracking parameters
     request_start_time=None,
@@ -272,11 +274,11 @@ def track_chat_completion(
                     else None
                 ),
             }
-            
+
             # Add custom metadata if provided
             if custom_metadata:
                 metadata.update(custom_metadata)
-            
+
             # Use the new tracker method signature with enhanced analytics
             tracker.track_usage_background(
                 customer_id=effective_customer_id,
@@ -302,12 +304,12 @@ def track_chat_completion(
 
 
 def track_completion(
-    result, 
-    customer_id, 
-    tracker, 
-    method_name, 
-    args, 
-    kwargs, 
+    result,
+    customer_id,
+    tracker,
+    method_name,
+    args,
+    kwargs,
     custom_metadata=None,
     # Enhanced tracking parameters
     request_start_time=None,
@@ -337,11 +339,11 @@ def track_completion(
                 "response_id": getattr(result, "id", None),
                 "created": getattr(result, "created", None),
             }
-            
+
             # Add custom metadata if provided
             if custom_metadata:
                 metadata.update(custom_metadata)
-            
+
             # Use the new tracker method signature with enhanced analytics
             tracker.track_usage_background(
                 customer_id=effective_customer_id,

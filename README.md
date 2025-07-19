@@ -14,21 +14,21 @@ Drop-in replacement for the OpenAI Python SDK with automatic usage tracking for 
 
 **Extremely robust and reliable** - Built for production environments with:
 
-- **100% Test Coverage** - 293 comprehensive tests ensuring reliability
-- **Non-blocking I/O** - Fire-and-forget tracking never slows your app  
-- **Zero Dependencies on Tracking** - OpenAI calls succeed even if tracking fails
-- **Enterprise Security** - API key sanitization and input validation
-- **Thread-safe** - Safe for multi-threaded and async applications
-- **Comprehensive Error Handling** - Circuit breakers, retries, graceful degradation
+- **Resilient Tracking:** OpenAI calls succeed even if tracking fails.
+- **Non-blocking I/O:** Fire-and-forget tracking never slows down your application.
+- **Automatic Retries:** Failed tracking attempts are automatically retried with exponential backoff.
+- **Thread-Safe Context:** Safely track usage across multi-threaded and async applications.
+- **Enterprise Security:** API key sanitization and input validation.
 
 ## 🎯 What it does
 
-`cmdrdata-openai` automatically tracks every OpenAI API call and sends usage data to your cmdrdata backend, enabling:
+`cmdrdata-openai` automatically tracks every OpenAI API call and sends detailed usage and performance data to your cmdrdata backend, enabling:
 
-- **Per-customer usage tracking** - Track exactly how much each of your customers uses AI
-- **Accurate billing** - Bill customers based on actual AI usage  
-- **Usage analytics** - Understand AI usage patterns across your application
-- **Cost management** - Monitor and control AI costs
+- **Per-customer usage tracking** - Track exactly how much each of your customers uses AI.
+- **Accurate billing** - Bill customers based on actual token usage.
+- **Performance Monitoring** - Identify slow or failing API calls.
+- **Usage analytics** - Understand AI usage patterns across your application.
+- **Cost management** - Monitor and control AI costs in real-time.
 
 ## 🚀 Quick Start
 
@@ -40,69 +40,35 @@ pip install cmdrdata-openai
 
 ### 2. Replace Your OpenAI Import
 
+It's a drop-in replacement. All you need to do is change how you initialize the client and add the `customer_id` to your API calls.
+
 **Before:**
 ```python
 from openai import OpenAI
-client = OpenAI(api_key="your-openai-key")
+
+# This client is not tracked
+client = OpenAI(api_key="sk-...")
 ```
 
 **After:**
 ```python
 from cmdrdata_openai import TrackedOpenAI
+
+# This client automatically tracks usage
 client = TrackedOpenAI(
-    api_key="your-openai-key",
-    tracker_key="your-cmdrdata-api-key"  # Get this at cmdrdata.ai
-)
-```
-
-Package Installation
-
-pip install cmdrdata-openai
-
-API Keys Required
-
-1. OpenAI API Key: export OPENAI_API_KEY="sk-your-key"
-2. CmdrData API Key: export CMDRDATA_API_KEY="cmd-live-v1-your-key"
-
-Basic Usage
-
-```python
-from cmdrdata_openai import TrackedOpenAI
-
-client = TrackedOpenAI(
-	api_key="sk-your-openai-key",  # or uses env var
-	tracker_key="tk-your-tracker-key"  # required
+    api_key="sk-...",
+    tracker_key="tk-..."  # Get this from cmdrdata.ai
 )
 
-response = client.chat.completions.create(
-	model="gpt-4",
-	messages=[{"role": "user", "content": "Hello!"}],
-	customer_id="customer-123"  # enables tracking
-)
-```
-
-### 3. Add Customer Tracking
-
-```python
-# Method 1: Explicit customer_id
+# Add customer_id to your calls to enable tracking
 response = client.chat.completions.create(
     model="gpt-4",
     messages=[{"role": "user", "content": "Hello!"}],
-    customer_id="customer-123"  # Track usage for this customer
-)
-
-# Method 2: Context-based (recommended for web apps)
-from cmdrdata_openai import set_customer_context
-
-set_customer_context("customer-123")
-response = client.chat.completions.create(
-    model="gpt-4",
-    messages=[{"role": "user", "content": "Hello!"}]
-    # Automatically tracked for customer-123
+    customer_id="customer-123"
 )
 ```
 
-That's it! **Every API call now automatically tracks token usage for billing and analytics.**
+That's it! **Every API call now automatically tracks token usage, performance, and errors.**
 
 ## 📖 Usage Patterns
 

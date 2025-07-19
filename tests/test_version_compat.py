@@ -7,25 +7,25 @@ from unittest.mock import patch, MagicMock, Mock
 from cmdrdata_openai.version_compat import (
     check_compatibility,
     get_compatibility_info,
-    VersionCompatibility
+    VersionCompatibility,
 )
 
 
 def test_compatibility_info_structure():
     """Test that compatibility info has expected structure"""
     info = get_compatibility_info()
-    
+
     assert isinstance(info, dict)
     assert "openai" in info
     assert "python" in info
-    
+
     openai_info = info["openai"]
     assert "installed" in openai_info
     assert "supported" in openai_info
     assert "min_supported" in openai_info
     assert "max_supported" in openai_info
     assert "tested_versions" in openai_info
-    
+
     python_info = info["python"]
     assert "version" in python_info
     assert "supported" in python_info
@@ -70,12 +70,12 @@ def test_version_warnings():
     assert compat.is_openai_supported() is False
 
 
-@patch('cmdrdata_openai.version_compat.sys.version_info', (3, 7, 0))
+@patch("cmdrdata_openai.version_compat.sys.version_info", (3, 7, 0))
 def test_python_version_support():
     """Test Python version support detection"""
     info = get_compatibility_info()
     python_info = info["python"]
-    
+
     # Python 3.7 should not be supported (we require 3.8+)
     assert python_info["supported"] is False
 
@@ -84,19 +84,19 @@ def test_compatibility_with_fallback_version():
     """Test compatibility checking with fallback version parser"""
     # This tests the fallback when packaging module is not available
     # Mock the packaging import to raise ImportError
-    with patch('builtins.__import__') as mock_import:
-        def side_effect(name, *args, **kwargs):
-            if name == 'packaging':
-                raise ImportError("No module named 'packaging'")
-            # For openai, return a mock with a version
-            elif name == 'openai':
-                mock_openai = Mock()
-                mock_openai.__version__ = "1.5.0"
-                return mock_openai
-            return __import__(name, *args, **kwargs)
-        
-        mock_import.side_effect = side_effect
-        
+    original_import = __import__
+
+    def side_effect(name, *args, **kwargs):
+        if name == "packaging":
+            raise ImportError("No module named 'packaging'")
+        # For openai, return a mock with a version
+        elif name == "openai":
+            mock_openai = Mock()
+            mock_openai.__version__ = "1.5.0"
+            return mock_openai
+        return original_import(name, *args, **kwargs)
+
+    with patch("builtins.__import__", side_effect=side_effect):
         # Should still work with basic version comparison
         compat = VersionCompatibility()
         info = compat.get_compatibility_info()
