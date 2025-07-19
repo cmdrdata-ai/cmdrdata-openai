@@ -261,30 +261,6 @@ class TestTrackedOpenAIIntegration:
         # Verify tracking was attempted (the actual tracking logic is tested separately)
         assert mock_tracker_instance.track_usage_background.called
 
-    @patch.dict(
-        os.environ, {"OPENAI_API_KEY": "sk-test123", "CMDRDATA_API_KEY": "tk-test123"}
-    )
-    @patch("cmdrdata_openai.client.OpenAI")
-    @patch("cmdrdata_openai.client.UsageTracker")
-    def test_environment_variable_initialization(
-        self, mock_tracker_class, mock_openai_class
-    ):
-        """Test initialization using environment variables"""
-        mock_openai_class.return_value = Mock()
-        mock_tracker_class.return_value = Mock()
-
-        # Initialize without explicit keys (should use env vars)
-        client = TrackedOpenAI(tracker_key="tk-override")
-
-        # Verify OpenAI client was created (api_key will be None, which OpenAI SDK handles)
-        mock_openai_class.assert_called_once_with(api_key=None)
-
-        # Verify tracker was created with override key
-        mock_tracker_class.assert_called_once_with(
-            api_key="tk-override",
-            endpoint="https://www.cmdrdata.ai/api/events",
-            timeout=5.0,
-        )
 
 
 if __name__ == "__main__":

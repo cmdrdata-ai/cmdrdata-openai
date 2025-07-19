@@ -16,10 +16,10 @@ class TestInputValidator:
         valid_key = "sk-" + "a" * 48
         assert InputValidator.validate_api_key(valid_key, "openai") is True
 
-    def test_validate_api_key_cmdrdata_success(self):
-        """Test successful cmdrdata API key validation"""
-        valid_key = "tk-" + "a" * 32
-        assert InputValidator.validate_api_key(valid_key, "cmdrdata") is True
+    def test_validate_api_key_generic_long_success(self):
+        """Test successful generic API key validation with longer key"""
+        valid_key = "api-" + "a" * 32
+        assert InputValidator.validate_api_key(valid_key, "generic") is True
 
     def test_validate_api_key_generic_success(self):
         """Test successful generic API key validation"""

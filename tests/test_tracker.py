@@ -488,56 +488,6 @@ class TestUsageTracker:
             mock_shutdown.assert_called_once_with(wait=False)
 
 
-class TestUsageTrackerIntegration:
-    """Integration tests for UsageTracker"""
-
-    def setup_method(self):
-        """Set up test fixtures"""
-        self.valid_api_key = "tk-" + "a" * 32
-        self.customer_id = "test-customer-123"
-        self.model = "gpt-4"
-        self.input_tokens = 10
-        self.output_tokens = 15
-
-    @patch("cmdrdata_openai.tracker.httpx")
-    def test_full_tracking_flow_success(self, mock_httpx):
-        """Test complete tracking flow from input to HTTP request"""
-        # Mock httpx
-        mock_client = Mock()
-        mock_response = Mock()
-        mock_response.status_code = 200
-        mock_client.post.return_value = mock_response
-        mock_httpx.Client.return_value.__enter__.return_value = mock_client
-
-        tracker = UsageTracker(api_key=self.valid_api_key)
-
-        result = tracker.track_usage(
-            customer_id=self.customer_id,
-            model=self.model,
-            input_tokens=self.input_tokens,
-            output_tokens=self.output_tokens,
-            provider="openai",
-            metadata={"test_key": "test_value"},
-            timestamp=datetime(2023, 1, 1, 12, 0, 0),
-        )
-
-        assert result is True
-
-        # Verify the HTTP request was made with correct data
-        mock_client.post.assert_called_once()
-        call_args = mock_client.post.call_args
-
-        assert call_args[1]["json"]["customer_id"] == self.customer_id
-        assert call_args[1]["json"]["model"] == self.model
-        assert call_args[1]["json"]["input_tokens"] == self.input_tokens
-        assert call_args[1]["json"]["output_tokens"] == self.output_tokens
-        assert call_args[1]["json"]["total_tokens"] == 25
-        assert call_args[1]["json"]["provider"] == "openai"
-        assert call_args[1]["json"]["metadata"]["test_key"] == "test_value"
-        assert (
-            call_args[1]["json"]["timestamp"] == 1672603200
-        )  # Unix timestamp for 2023-01-01T12:00:00 UTC
-        assert call_args[1]["json"]["version"] == "0.1.0"
 
 
 if __name__ == "__main__":

@@ -67,7 +67,6 @@ def valid_api_keys():
     return {
         "openai": "sk-" + "a" * 48,
         "openai_legacy": "sk-" + "b" * 48,
-        "cmdrdata": "tk-" + "c" * 32,
         "generic": "x" * 32,
     }
 
@@ -219,7 +218,6 @@ def env_vars():
     """Environment variables for testing"""
     return {
         "OPENAI_API_KEY": "sk-test-openai-key-123456789012345678901234567890",
-        "CMDRDATA_API_KEY": "tk-test-cmdrdata-key-123456789012345678901234",
         "CMDRDATA_LOG_LEVEL": "DEBUG",
         "CMDRDATA_LOG_FORMAT": "structured",
         "CMDRDATA_SECURITY_MODE": "true",

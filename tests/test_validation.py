@@ -19,10 +19,10 @@ class TestAPIKeyManager:
         assert result["valid"] is True
         assert result["provider"] == "openai"
 
-    def test_validate_api_key_cmdrdata_success(self):
-        """Test successful cmdrdata API key validation"""
-        valid_key = "tk-" + "a" * 32
-        result = APIKeyManager.validate_api_key(valid_key, "cmdrdata")
+    def test_validate_api_key_generic_long_success(self):
+        """Test successful generic API key validation with longer key"""
+        valid_key = "api-" + "a" * 32
+        result = APIKeyManager.validate_api_key(valid_key, "generic")
         assert result["valid"] is True
 
     def test_validate_api_key_generic_success(self):

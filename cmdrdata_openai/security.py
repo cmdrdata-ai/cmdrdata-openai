@@ -62,11 +62,6 @@ class APIKeyManager:
             "pattern": r"^AIza[a-zA-Z0-9_-]{35}$",
             "description": "Google Gemini API key",
         },
-        "cmdrdata": {
-            "pattern": r"^cmd-live-v1-[a-zA-Z0-9_-]+-[a-zA-Z0-9_-]+$",
-            "legacy_pattern": r"^tk-[a-zA-Z0-9]{32,64}$",
-            "description": "cmdrdata tracking key",
-        },
     }
 
     # Suspicious patterns that might indicate injection attempts
