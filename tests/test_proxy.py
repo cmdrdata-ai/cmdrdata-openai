@@ -10,6 +10,12 @@ from cmdrdata_openai.proxy import (
     TrackedProxy,
     track_chat_completion,
     track_completion,
+    track_embeddings,
+    track_images,
+    track_audio,
+    track_moderations,
+    track_fine_tuning,
+    track_assistant_run,
     OPENAI_TRACK_METHODS,
 )
 from cmdrdata_openai.tracker import UsageTracker
@@ -469,22 +475,330 @@ class TestTrackingFunctions:
             assert call_kwargs["output_tokens"] == 15
             assert call_kwargs["provider"] == "openai"
 
+    def test_track_embeddings_success(self):
+        """Test successful embeddings tracking"""
+        # Set up embeddings response
+        mock_embedding_result = Mock()
+        mock_embedding_result.model = "text-embedding-ada-002"
+        mock_embedding_result.usage = Mock()
+        mock_embedding_result.usage.prompt_tokens = 100
+        mock_embedding_result.data = [Mock()]
+        mock_embedding_result.data[0].embedding = [0.1, 0.2, 0.3]
+        mock_embedding_result.id = "emb_123"
+        mock_embedding_result.created = 1234567890
+        
+        with patch(
+            "cmdrdata_openai.proxy.get_effective_customer_id"
+        ) as mock_get_customer:
+            mock_get_customer.return_value = "test-customer"
+
+            track_embeddings(
+                result=mock_embedding_result,
+                customer_id="test-customer",
+                tracker=self.mock_tracker,
+                method_name="embeddings.create",
+                args=(),
+                kwargs={"input": ["test text"], "model": "text-embedding-ada-002"},
+            )
+
+            # Verify tracker was called
+            self.mock_tracker.track_usage_background.assert_called_once()
+            call_kwargs = self.mock_tracker.track_usage_background.call_args[1]
+
+            assert call_kwargs["customer_id"] == "test-customer"
+            assert call_kwargs["model"] == "text-embedding-ada-002"
+            assert call_kwargs["input_tokens"] == 100
+            assert call_kwargs["output_tokens"] == 0
+            assert call_kwargs["provider"] == "openai"
+            assert call_kwargs["metadata"]["response_id"] == "emb_123"
+            assert call_kwargs["metadata"]["created"] == 1234567890
+            assert call_kwargs["metadata"]["embedding_count"] == 1
+
+    def test_track_images_success(self):
+        """Test successful image generation tracking"""
+        # Set up image response
+        mock_image_result = Mock()
+        mock_image_result.data = [Mock(), Mock()]  # 2 images
+        mock_image_result.data[0].url = "https://example.com/image1.png"
+        mock_image_result.data[1].url = "https://example.com/image2.png"
+        mock_image_result.created = 1234567890
+        
+        with patch(
+            "cmdrdata_openai.proxy.get_effective_customer_id"
+        ) as mock_get_customer:
+            mock_get_customer.return_value = "test-customer"
+
+            track_images(
+                result=mock_image_result,
+                customer_id="test-customer",
+                tracker=self.mock_tracker,
+                method_name="images.generate",
+                args=(),
+                kwargs={"prompt": "a cat", "n": 2, "size": "1024x1024", "model": "dall-e-3"},
+            )
+
+            # Verify tracker was called
+            self.mock_tracker.track_usage_background.assert_called_once()
+            call_kwargs = self.mock_tracker.track_usage_background.call_args[1]
+
+            assert call_kwargs["customer_id"] == "test-customer"
+            assert call_kwargs["model"] == "dall-e-3"
+            assert call_kwargs["input_tokens"] == 0  # Images don't use text tokens
+            assert call_kwargs["output_tokens"] == 0
+            assert call_kwargs["provider"] == "openai"
+            assert call_kwargs["metadata"]["image_count"] == 2
+            assert call_kwargs["metadata"]["size"] == "1024x1024"
+            assert call_kwargs["metadata"]["operation"] == "generate"
+            assert call_kwargs["metadata"]["created"] == 1234567890
+
+    def test_track_audio_success(self):
+        """Test successful audio processing tracking"""
+        # Set up audio transcription response
+        mock_audio_result = Mock()
+        mock_audio_result.text = "Hello, this is a transcription"
+        
+        with patch(
+            "cmdrdata_openai.proxy.get_effective_customer_id"
+        ) as mock_get_customer:
+            mock_get_customer.return_value = "test-customer"
+
+            track_audio(
+                result=mock_audio_result,
+                customer_id="test-customer",
+                tracker=self.mock_tracker,
+                method_name="audio.transcriptions.create",
+                args=(),
+                kwargs={"file": "audio.mp3", "model": "whisper-1", "language": "en"},
+            )
+
+            # Verify tracker was called
+            self.mock_tracker.track_usage_background.assert_called_once()
+            call_kwargs = self.mock_tracker.track_usage_background.call_args[1]
+
+            assert call_kwargs["customer_id"] == "test-customer"
+            assert call_kwargs["model"] == "whisper-1"
+            assert call_kwargs["input_tokens"] == 0
+            assert call_kwargs["output_tokens"] == 0
+            assert call_kwargs["provider"] == "openai"
+            assert call_kwargs["metadata"]["operation"] == "create"
+            assert call_kwargs["metadata"]["text_length"] == 30
+            assert call_kwargs["metadata"]["language"] == "en"
+
+    def test_track_moderations_success(self):
+        """Test successful moderation tracking"""
+        # Set up moderation response
+        mock_moderation_result = Mock()
+        mock_moderation_result.results = [Mock()]
+        mock_moderation_result.results[0].flagged = False
+        mock_moderation_result.results[0].categories = Mock()
+        mock_moderation_result.results[0].category_scores = Mock()
+        mock_moderation_result.model = "text-moderation-latest"
+        mock_moderation_result.id = "modr-123"
+        
+        with patch(
+            "cmdrdata_openai.proxy.get_effective_customer_id"
+        ) as mock_get_customer:
+            mock_get_customer.return_value = "test-customer"
+
+            track_moderations(
+                result=mock_moderation_result,
+                customer_id="test-customer",
+                tracker=self.mock_tracker,
+                method_name="moderations.create",
+                args=(),
+                kwargs={"input": "test content", "model": "text-moderation-latest"},
+            )
+
+            # Verify tracker was called
+            self.mock_tracker.track_usage_background.assert_called_once()
+            call_kwargs = self.mock_tracker.track_usage_background.call_args[1]
+
+            assert call_kwargs["customer_id"] == "test-customer"
+            assert call_kwargs["model"] == "text-moderation-latest"
+            assert call_kwargs["input_tokens"] == 0
+            assert call_kwargs["output_tokens"] == 0
+            assert call_kwargs["provider"] == "openai"
+            assert call_kwargs["metadata"]["flagged"] is False
+            assert call_kwargs["metadata"]["response_id"] == "modr-123"
+
+    def test_track_fine_tuning_success(self):
+        """Test successful fine-tuning tracking"""
+        # Set up fine-tuning job response
+        mock_ft_result = Mock()
+        mock_ft_result.id = "ftjob-123"
+        mock_ft_result.model = "gpt-3.5-turbo"
+        mock_ft_result.training_file = "file-123"
+        mock_ft_result.status = "queued"
+        mock_ft_result.created_at = 1234567890
+        
+        with patch(
+            "cmdrdata_openai.proxy.get_effective_customer_id"
+        ) as mock_get_customer:
+            mock_get_customer.return_value = "test-customer"
+
+            track_fine_tuning(
+                result=mock_ft_result,
+                customer_id="test-customer",
+                tracker=self.mock_tracker,
+                method_name="fine_tuning.jobs.create",
+                args=(),
+                kwargs={"training_file": "file-123", "model": "gpt-3.5-turbo"},
+            )
+
+            # Verify tracker was called
+            self.mock_tracker.track_usage_background.assert_called_once()
+            call_kwargs = self.mock_tracker.track_usage_background.call_args[1]
+
+            assert call_kwargs["customer_id"] == "test-customer"
+            assert call_kwargs["model"] == "gpt-3.5-turbo"
+            assert call_kwargs["input_tokens"] == 0
+            assert call_kwargs["output_tokens"] == 0
+            assert call_kwargs["provider"] == "openai"
+            assert call_kwargs["metadata"]["job_id"] == "ftjob-123"
+            assert call_kwargs["metadata"]["training_file"] == "file-123"
+            assert call_kwargs["metadata"]["status"] == "queued"
+            assert call_kwargs["metadata"]["model"] == "gpt-3.5-turbo"
+
+    def test_track_assistant_run_success(self):
+        """Test successful assistant run tracking"""
+        # Set up assistant run response
+        mock_run_result = Mock()
+        mock_run_result.id = "run_123"
+        mock_run_result.assistant_id = "asst_123"
+        mock_run_result.thread_id = "thread_123"
+        mock_run_result.status = "queued"
+        mock_run_result.model = "gpt-4"
+        mock_run_result.usage = Mock()
+        mock_run_result.usage.prompt_tokens = 50
+        mock_run_result.usage.completion_tokens = 100
+        mock_run_result.created_at = 1234567890
+        
+        with patch(
+            "cmdrdata_openai.proxy.get_effective_customer_id"
+        ) as mock_get_customer:
+            mock_get_customer.return_value = "test-customer"
+
+            track_assistant_run(
+                result=mock_run_result,
+                customer_id="test-customer",
+                tracker=self.mock_tracker,
+                method_name="beta.threads.runs.create",
+                args=(),
+                kwargs={"thread_id": "thread_123", "assistant_id": "asst_123"},
+            )
+
+            # Verify tracker was called
+            self.mock_tracker.track_usage_background.assert_called_once()
+            call_kwargs = self.mock_tracker.track_usage_background.call_args[1]
+
+            assert call_kwargs["customer_id"] == "test-customer"
+            assert call_kwargs["model"] == "gpt-4"
+            assert call_kwargs["input_tokens"] == 50
+            assert call_kwargs["output_tokens"] == 100
+            assert call_kwargs["provider"] == "openai"
+            assert call_kwargs["metadata"]["run_id"] == "run_123"
+            assert call_kwargs["metadata"]["assistant_id"] == "asst_123"
+            assert call_kwargs["metadata"]["thread_id"] == "thread_123"
+            assert call_kwargs["metadata"]["status"] == "queued"
+
 
 class TestOpenAITrackMethods:
     """Test suite for OPENAI_TRACK_METHODS configuration"""
 
     def test_openai_track_methods_configuration(self):
         """Test OPENAI_TRACK_METHODS contains expected methods"""
-        assert "chat.completions.create" in OPENAI_TRACK_METHODS
-        assert "completions.create" in OPENAI_TRACK_METHODS
+        expected_methods = {
+            "chat.completions.create": track_chat_completion,
+            "completions.create": track_completion,
+            "embeddings.create": track_embeddings,
+            "images.generate": track_images,
+            "images.edit": track_images,
+            "images.create_variation": track_images,
+            "audio.transcriptions.create": track_audio,
+            "audio.translations.create": track_audio,
+            "audio.speech.create": track_audio,
+            "moderations.create": track_moderations,
+            "fine_tuning.jobs.create": track_fine_tuning,
+            "beta.threads.runs.create": track_assistant_run,
+            "beta.threads.runs.create_and_poll": track_assistant_run,
+        }
+        
+        for method_name, expected_function in expected_methods.items():
+            assert method_name in OPENAI_TRACK_METHODS, f"Missing method: {method_name}"
+            assert callable(OPENAI_TRACK_METHODS[method_name]), f"Method {method_name} not callable"
+            assert OPENAI_TRACK_METHODS[method_name] == expected_function, f"Wrong function for {method_name}"
+            
+        # Verify we have the expected total count
+        assert len(OPENAI_TRACK_METHODS) == 13, f"Expected 13 methods, got {len(OPENAI_TRACK_METHODS)}"
 
-        # Verify the functions are callable
-        assert callable(OPENAI_TRACK_METHODS["chat.completions.create"])
-        assert callable(OPENAI_TRACK_METHODS["completions.create"])
-
-        # Verify they point to the correct functions
-        assert OPENAI_TRACK_METHODS["chat.completions.create"] == track_chat_completion
-        assert OPENAI_TRACK_METHODS["completions.create"] == track_completion
+    def test_proxy_integration_all_methods(self):
+        """Test that all tracking methods work through proxy integration"""
+        mock_client = Mock()
+        mock_tracker = Mock()
+        
+        # Set up nested mock structure for OpenAI client
+        mock_client.chat = Mock()
+        mock_client.chat.completions = Mock()
+        mock_client.chat.completions.create = Mock(return_value="chat_result")
+        
+        mock_client.completions = Mock()
+        mock_client.completions.create = Mock(return_value="completion_result")
+        
+        mock_client.embeddings = Mock()
+        mock_client.embeddings.create = Mock(return_value="embedding_result")
+        
+        mock_client.images = Mock()
+        mock_client.images.generate = Mock(return_value="image_result")
+        mock_client.images.edit = Mock(return_value="image_edit_result")
+        mock_client.images.create_variation = Mock(return_value="image_var_result")
+        
+        mock_client.audio = Mock()
+        mock_client.audio.transcriptions = Mock()
+        mock_client.audio.transcriptions.create = Mock(return_value="transcription_result")
+        mock_client.audio.translations = Mock()
+        mock_client.audio.translations.create = Mock(return_value="translation_result")
+        mock_client.audio.speech = Mock()
+        mock_client.audio.speech.create = Mock(return_value="speech_result")
+        
+        mock_client.moderations = Mock()
+        mock_client.moderations.create = Mock(return_value="moderation_result")
+        
+        mock_client.fine_tuning = Mock()
+        mock_client.fine_tuning.jobs = Mock()
+        mock_client.fine_tuning.jobs.create = Mock(return_value="ft_result")
+        
+        mock_client.beta = Mock()
+        mock_client.beta.threads = Mock()
+        mock_client.beta.threads.runs = Mock()
+        mock_client.beta.threads.runs.create = Mock(return_value="run_result")
+        mock_client.beta.threads.runs.create_and_poll = Mock(return_value="run_poll_result")
+        
+        proxy = TrackedProxy(
+            client=mock_client,
+            tracker=mock_tracker,
+            track_methods=OPENAI_TRACK_METHODS
+        )
+        
+        # Test each method through proxy
+        test_cases = [
+            (lambda: proxy.chat.completions.create(), "chat_result"),
+            (lambda: proxy.completions.create(), "completion_result"),
+            (lambda: proxy.embeddings.create(), "embedding_result"),
+            (lambda: proxy.images.generate(), "image_result"),
+            (lambda: proxy.images.edit(), "image_edit_result"),
+            (lambda: proxy.images.create_variation(), "image_var_result"),
+            (lambda: proxy.audio.transcriptions.create(), "transcription_result"),
+            (lambda: proxy.audio.translations.create(), "translation_result"),
+            (lambda: proxy.audio.speech.create(), "speech_result"),
+            (lambda: proxy.moderations.create(), "moderation_result"),
+            (lambda: proxy.fine_tuning.jobs.create(), "ft_result"),
+            (lambda: proxy.beta.threads.runs.create(), "run_result"),
+            (lambda: proxy.beta.threads.runs.create_and_poll(), "run_poll_result"),
+        ]
+        
+        for test_func, expected_result in test_cases:
+            result = test_func()
+            assert result == expected_result
 
 
 if __name__ == "__main__":

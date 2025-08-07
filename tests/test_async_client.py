@@ -38,7 +38,7 @@ class TestAsyncTrackedOpenAI:
         # Verify tracker was created
         mock_tracker_class.assert_called_once_with(
             api_key=self.valid_tracker_key,
-            endpoint="https://cmdrdata.ai/api/events",
+            endpoint="https://api.cmdrdata.ai/api/events",
             timeout=5.0,
         )
 

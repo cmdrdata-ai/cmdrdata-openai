@@ -368,8 +368,296 @@ def track_completion(
         logger.warning(f"Failed to extract usage data from completion: {e}")
 
 
-# OpenAI tracking configuration
+def track_embeddings(
+    result,
+    customer_id,
+    tracker,
+    method_name,
+    args,
+    kwargs,
+    custom_metadata=None,
+    **tracking_params
+):
+    """Track embeddings usage"""
+    try:
+        effective_customer_id = get_effective_customer_id(customer_id)
+        if not effective_customer_id:
+            logger.warning("No customer_id provided for embeddings tracking")
+            return
+
+        if hasattr(result, "usage") and result.usage:
+            metadata = {
+                "response_id": getattr(result, "id", None),
+                "created": getattr(result, "created", None),
+                "embedding_count": len(result.data) if hasattr(result, "data") else 0,
+            }
+            if custom_metadata:
+                metadata.update(custom_metadata)
+
+            tracker.track_usage_background(
+                customer_id=effective_customer_id,
+                model=getattr(result, "model", kwargs.get("model", "unknown")),
+                input_tokens=result.usage.prompt_tokens if result.usage else 0,
+                output_tokens=0,  # Embeddings don't have output tokens
+                provider="openai",
+                metadata=metadata,
+                **tracking_params
+            )
+    except Exception as e:
+        logger.warning(f"Failed to track embeddings: {e}")
+
+
+def track_images(
+    result,
+    customer_id,
+    tracker,
+    method_name,
+    args,
+    kwargs,
+    custom_metadata=None,
+    **tracking_params
+):
+    """Track image generation usage"""
+    try:
+        effective_customer_id = get_effective_customer_id(customer_id)
+        if not effective_customer_id:
+            logger.warning("No customer_id provided for image tracking")
+            return
+
+        # Image generation doesn't return usage in tokens but we track the operation
+        metadata = {
+            "created": getattr(result, "created", None),
+            "image_count": len(result.data) if hasattr(result, "data") else 0,
+            "size": kwargs.get("size", "1024x1024"),
+            "quality": kwargs.get("quality", "standard"),
+            "style": kwargs.get("style", "vivid"),
+            "operation": method_name.split(".")[-1],  # generate, edit, or create_variation
+        }
+        if custom_metadata:
+            metadata.update(custom_metadata)
+
+        # For images, we track as a custom event with estimated tokens
+        # DALL-E doesn't report tokens, but we can estimate based on operation
+        model = kwargs.get("model", "dall-e-2")
+        
+        tracker.track_usage_background(
+            customer_id=effective_customer_id,
+            model=model,
+            input_tokens=0,  # Images don't use text tokens in the same way
+            output_tokens=0,
+            provider="openai",
+            metadata=metadata,
+            **tracking_params
+        )
+    except Exception as e:
+        logger.warning(f"Failed to track image generation: {e}")
+
+
+def track_audio(
+    result,
+    customer_id,
+    tracker,
+    method_name,
+    args,
+    kwargs,
+    custom_metadata=None,
+    **tracking_params
+):
+    """Track audio operations (transcription, translation, TTS)"""
+    try:
+        effective_customer_id = get_effective_customer_id(customer_id)
+        if not effective_customer_id:
+            logger.warning("No customer_id provided for audio tracking")
+            return
+
+        metadata = {
+            "operation": method_name.split(".")[-1],  # transcriptions, translations, or speech
+        }
+        
+        # Different metadata based on operation type
+        if "speech" in method_name:
+            # Text-to-speech
+            metadata["voice"] = kwargs.get("voice", "alloy")
+            metadata["response_format"] = kwargs.get("response_format", "mp3")
+            model = kwargs.get("model", "tts-1")
+        else:
+            # Transcription or translation
+            metadata["language"] = kwargs.get("language", "auto")
+            metadata["response_format"] = kwargs.get("response_format", "json")
+            if hasattr(result, "text"):
+                metadata["text_length"] = len(result.text)
+            model = kwargs.get("model", "whisper-1")
+        
+        if custom_metadata:
+            metadata.update(custom_metadata)
+
+        # Audio operations don't report token usage directly
+        tracker.track_usage_background(
+            customer_id=effective_customer_id,
+            model=model,
+            input_tokens=0,
+            output_tokens=0,
+            provider="openai",
+            metadata=metadata,
+            **tracking_params
+        )
+    except Exception as e:
+        logger.warning(f"Failed to track audio operation: {e}")
+
+
+def track_moderations(
+    result,
+    customer_id,
+    tracker,
+    method_name,
+    args,
+    kwargs,
+    custom_metadata=None,
+    **tracking_params
+):
+    """Track moderation API usage"""
+    try:
+        effective_customer_id = get_effective_customer_id(customer_id)
+        if not effective_customer_id:
+            logger.warning("No customer_id provided for moderation tracking")
+            return
+
+        metadata = {
+            "response_id": getattr(result, "id", None),
+            "flagged": any(r.flagged for r in result.results) if hasattr(result, "results") else False,
+        }
+        if custom_metadata:
+            metadata.update(custom_metadata)
+
+        # Moderation is free but we track for analytics
+        tracker.track_usage_background(
+            customer_id=effective_customer_id,
+            model=kwargs.get("model", "text-moderation-latest"),
+            input_tokens=0,  # Moderation doesn't charge tokens
+            output_tokens=0,
+            provider="openai",
+            metadata=metadata,
+            **tracking_params
+        )
+    except Exception as e:
+        logger.warning(f"Failed to track moderation: {e}")
+
+
+def track_fine_tuning(
+    result,
+    customer_id,
+    tracker,
+    method_name,
+    args,
+    kwargs,
+    custom_metadata=None,
+    **tracking_params
+):
+    """Track fine-tuning job creation"""
+    try:
+        effective_customer_id = get_effective_customer_id(customer_id)
+        if not effective_customer_id:
+            logger.warning("No customer_id provided for fine-tuning tracking")
+            return
+
+        metadata = {
+            "job_id": getattr(result, "id", None),
+            "status": getattr(result, "status", None),
+            "model": getattr(result, "model", kwargs.get("model", "unknown")),
+            "training_file": kwargs.get("training_file"),
+            "validation_file": kwargs.get("validation_file"),
+        }
+        if custom_metadata:
+            metadata.update(custom_metadata)
+
+        # Fine-tuning costs are complex, track the job creation
+        tracker.track_usage_background(
+            customer_id=effective_customer_id,
+            model=kwargs.get("model", "gpt-3.5-turbo"),
+            input_tokens=0,  # Actual token usage tracked separately
+            output_tokens=0,
+            provider="openai",
+            metadata=metadata,
+            **tracking_params
+        )
+    except Exception as e:
+        logger.warning(f"Failed to track fine-tuning job: {e}")
+
+
+def track_assistant_run(
+    result,
+    customer_id,
+    tracker,
+    method_name,
+    args,
+    kwargs,
+    custom_metadata=None,
+    **tracking_params
+):
+    """Track Assistant API run creation (which consumes tokens)"""
+    try:
+        effective_customer_id = get_effective_customer_id(customer_id)
+        if not effective_customer_id:
+            logger.warning("No customer_id provided for assistant run tracking")
+            return
+
+        metadata = {
+            "run_id": getattr(result, "id", None),
+            "thread_id": getattr(result, "thread_id", None),
+            "assistant_id": getattr(result, "assistant_id", None),
+            "status": getattr(result, "status", None),
+        }
+        
+        # Check if usage data is available (it might be after polling)
+        if hasattr(result, "usage") and result.usage:
+            input_tokens = getattr(result.usage, "prompt_tokens", 0)
+            output_tokens = getattr(result.usage, "completion_tokens", 0)
+        else:
+            input_tokens = 0
+            output_tokens = 0
+            
+        if custom_metadata:
+            metadata.update(custom_metadata)
+
+        tracker.track_usage_background(
+            customer_id=effective_customer_id,
+            model=kwargs.get("model", "gpt-4"),  # Assistants often use GPT-4
+            input_tokens=input_tokens,
+            output_tokens=output_tokens,
+            provider="openai",
+            metadata=metadata,
+            **tracking_params
+        )
+    except Exception as e:
+        logger.warning(f"Failed to track assistant run: {e}")
+
+
+# OpenAI tracking configuration - All methods that consume tokens or should be tracked
 OPENAI_TRACK_METHODS = {
+    # Text generation
     "chat.completions.create": track_chat_completion,
     "completions.create": track_completion,
+    
+    # Embeddings
+    "embeddings.create": track_embeddings,
+    
+    # Images (DALL-E)
+    "images.generate": track_images,
+    "images.edit": track_images,
+    "images.create_variation": track_images,
+    
+    # Audio (Whisper & TTS)
+    "audio.transcriptions.create": track_audio,
+    "audio.translations.create": track_audio,
+    "audio.speech.create": track_audio,
+    
+    # Moderation (free but worth tracking)
+    "moderations.create": track_moderations,
+    
+    # Fine-tuning
+    "fine_tuning.jobs.create": track_fine_tuning,
+    
+    # Assistants API (Beta) - only track operations that consume tokens
+    "beta.threads.runs.create": track_assistant_run,
+    "beta.threads.runs.create_and_poll": track_assistant_run,
 }

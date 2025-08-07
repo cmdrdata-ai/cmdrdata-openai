@@ -181,7 +181,7 @@ class AsyncTrackedOpenAI:
         self,
         api_key: Optional[str] = None,
         tracker_key: Optional[str] = None,
-        tracker_endpoint: str = "https://cmdrdata.ai/api/events",
+        tracker_endpoint: str = "https://api.cmdrdata.ai/api/events",
         tracker_timeout: float = 5.0,
         **kwargs,
     ):
@@ -198,7 +198,7 @@ class AsyncTrackedOpenAI:
         if tracker_key is None:
             raise ValueError(
                 "tracker_key is required for usage tracking. "
-                "Get your API key at https://cmdrdata.ai"
+                "Get your API key at https://api.cmdrdata.ai"
             )
 
         # Initialize the underlying AsyncOpenAI client
