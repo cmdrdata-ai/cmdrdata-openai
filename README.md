@@ -8,7 +8,9 @@
 [![Downloads](https://pepy.tech/badge/cmdrdata-openai)](https://pepy.tech/project/cmdrdata-openai)
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 
-Drop-in replacement for the OpenAI Python SDK with automatic usage tracking for billing and analytics.
+**Customer tracking and usage-based billing for OpenAI APIs**
+
+Transform your OpenAI integration into a customer-aware, usage-based billing system. Track exactly what each customer consumes and bill them accordingly with fine-grained precision.
 
 ## 🛡️ Production Ready
 
@@ -20,15 +22,27 @@ Drop-in replacement for the OpenAI Python SDK with automatic usage tracking for 
 - **Thread-Safe Context:** Safely track usage across multi-threaded and async applications.
 - **Enterprise Security:** API key sanitization and input validation.
 
-## 🎯 What it does
+## 💰 Customer Tracking & Usage-Based Billing
 
-`cmdrdata-openai` automatically tracks every OpenAI API call and sends detailed usage and performance data to your cmdrdata backend, enabling:
+`cmdrdata-openai` enables **fine-grained customer tracking** and **usage-based billing** for your AI application:
 
-- **Per-customer usage tracking** - Track exactly how much each of your customers uses AI.
-- **Accurate billing** - Bill customers based on actual token usage.
-- **Performance Monitoring** - Identify slow or failing API calls.
-- **Usage analytics** - Understand AI usage patterns across your application.
-- **Cost management** - Monitor and control AI costs in real-time.
+### **Customer-Level Visibility**
+- **Per-customer token consumption** - Track exactly how much each customer uses
+- **Usage attribution** - Every API call is attributed to a specific customer
+- **Customer context management** - Automatic customer tracking across your application
+
+### **Fine-Grained Billing Control**
+- **Custom pricing models** - Set your own rates beyond simple token counts
+- **Arbitrary metadata tracking** - Attach any billing-relevant data to each API call
+- **Multi-dimensional billing** - Bill based on tokens, requests, models, or custom metrics
+- **Real-time usage monitoring** - Track costs and usage as they happen
+
+### **What Gets Tracked**
+- **Token usage** (input/output tokens for accurate billing)
+- **Model information** (gpt-4, gpt-3.5-turbo, etc.)
+- **Customer identification** (your customer IDs)
+- **Custom metadata** (request types, feature usage, geographic data, etc.)
+- **Performance metrics** (response times, error rates)
 
 ## 🚀 Quick Start
 
@@ -37,6 +51,8 @@ Drop-in replacement for the OpenAI Python SDK with automatic usage tracking for 
 ```bash
 pip install cmdrdata-openai
 ```
+
+**Note**: This package wraps the official OpenAI SDK. If you already have `openai` installed, CmdrData will use your existing version. If not, it will install a compatible version automatically. [Learn more about dependency management →](docs/DEPENDENCY_MANAGEMENT.md)
 
 ### 2. Replace Your OpenAI Import
 
@@ -57,7 +73,7 @@ from cmdrdata_openai import TrackedOpenAI
 # This client automatically tracks usage
 client = TrackedOpenAI(
     api_key="sk-...",
-    tracker_key="tk-..."  # Get this from cmdrdata.ai
+    tracker_key="tk-..."  # Get this from your cmdrdata dashboard
 )
 
 # Add customer_id to your calls to enable tracking
@@ -131,6 +147,48 @@ response = await client.chat.completions.create(
 )
 ```
 
+### 💎 Fine-Grained Billing with Custom Metadata
+
+Track arbitrary metadata with each API call to enable sophisticated billing models:
+
+```python
+# Example: SaaS application with feature-based billing
+response = client.chat.completions.create(
+    model="gpt-4",
+    messages=[{"role": "user", "content": "Analyze this data..."}],
+    customer_id="customer-123",
+    # Custom metadata for fine-grained billing
+    custom_metadata={
+        "feature": "data_analysis",
+        "plan_tier": "premium", 
+        "region": "us-east",
+        "request_size": "large",
+        "processing_type": "batch"
+    }
+)
+
+# Example: Usage-based pricing by request complexity
+response = client.chat.completions.create(
+    model="gpt-4",
+    messages=long_conversation_history,
+    customer_id="customer-456",
+    custom_metadata={
+        "request_complexity": "high",
+        "conversation_length": len(long_conversation_history),
+        "business_unit": "sales",
+        "priority": "high"
+    }
+)
+```
+
+**Billing Use Cases:**
+- **Feature-based pricing**: Bill differently for different app features
+- **Complexity-based pricing**: Higher rates for complex requests
+- **Geographic pricing**: Different rates by customer region  
+- **Plan-tier pricing**: Premium customers pay different rates
+- **Volume discounts**: Track cumulative usage for volume pricing
+- **Department billing**: Track usage by business unit or team
+
 ## 🔧 Configuration
 
 ### Basic Configuration
@@ -139,7 +197,7 @@ response = await client.chat.completions.create(
 client = TrackedOpenAI(
     api_key="your-openai-key",           # OpenAI API key
     tracker_key="your-cmdrdata-key",     # cmdrdata API key
-    tracker_endpoint="https://cmdrdata.ai/api/events",  # cmdrdata endpoint
+    tracker_endpoint="https://api.cmdrdata.ai/api/events",  # cmdrdata endpoint
     tracker_timeout=5.0                   # Timeout for tracking requests
 )
 ```
@@ -236,10 +294,26 @@ Example tracked event:
 }
 ```
 
+## 🔧 How It Works
+
+CmdrData-OpenAI uses a **proxy pattern** to wrap your existing OpenAI client:
+
+1. **You import CmdrData**: `from cmdrdata_openai import TrackedOpenAI`
+2. **CmdrData imports OpenAI**: Uses your installed `openai` package
+3. **Creates a wrapper**: Wraps the OpenAI client with tracking
+4. **Forwards everything**: All OpenAI methods work exactly the same
+5. **Tracks usage**: Intercepts responses to track token usage
+
+**This means**:
+- ✅ No conflicts with your OpenAI version
+- ✅ All OpenAI features continue working
+- ✅ You can upgrade OpenAI independently
+- ✅ Zero performance overhead (async tracking)
+
 ## 🔌 Compatibility
 
-- **OpenAI SDK**: Compatible with OpenAI SDK v1.0.0+
-- **Python**: Requires Python 3.8+
+- **OpenAI SDK**: Compatible with OpenAI SDK v1.0.0+ (tested with 1.58.0+)
+- **Python**: Requires Python 3.9+
 - **Async**: Full support for both sync and async usage
 - **Frameworks**: Works with Flask, FastAPI, Django, etc.
 
@@ -249,11 +323,10 @@ Example tracked event:
 # Basic installation
 pip install cmdrdata-openai
 
-# With development dependencies
-pip install cmdrdata-openai[dev]
-
-# With test dependencies
-pip install cmdrdata-openai[test]
+# For development
+git clone https://github.com/cmdrdata-ai/cmdrdata-openai.git
+cd cmdrdata-openai
+uv pip install -e .[dev]
 ```
 
 ## 🛠️ Development
@@ -271,7 +344,7 @@ uv pip install -e .[dev]
 ### Running Tests
 
 ```bash
-# Run all tests (100% pass rate!)
+# Run all tests  
 uv run pytest
 
 # Run with coverage reporting
@@ -301,9 +374,9 @@ uv run safety check
 
 The project uses GitHub Actions for:
 
-- **Continuous Integration** - Tests across Python 3.8-3.12
+- **Continuous Integration** - Tests across Python 3.9-3.13
 - **Code Quality** - Black, isort, mypy, safety checks  
-- **Coverage Reporting** - Automatic coverage tracking with Codecov
+- **Coverage Reporting** - >90% test coverage with Codecov
 - **Automated Publishing** - PyPI releases on GitHub releases
 
 ## 🆘 Troubleshooting

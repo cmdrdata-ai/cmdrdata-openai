@@ -376,7 +376,7 @@ def track_embeddings(
     args,
     kwargs,
     custom_metadata=None,
-    **tracking_params
+    **tracking_params,
 ):
     """Track embeddings usage"""
     try:
@@ -401,7 +401,7 @@ def track_embeddings(
                 output_tokens=0,  # Embeddings don't have output tokens
                 provider="openai",
                 metadata=metadata,
-                **tracking_params
+                **tracking_params,
             )
     except Exception as e:
         logger.warning(f"Failed to track embeddings: {e}")
@@ -415,7 +415,7 @@ def track_images(
     args,
     kwargs,
     custom_metadata=None,
-    **tracking_params
+    **tracking_params,
 ):
     """Track image generation usage"""
     try:
@@ -431,7 +431,9 @@ def track_images(
             "size": kwargs.get("size", "1024x1024"),
             "quality": kwargs.get("quality", "standard"),
             "style": kwargs.get("style", "vivid"),
-            "operation": method_name.split(".")[-1],  # generate, edit, or create_variation
+            "operation": method_name.split(".")[
+                -1
+            ],  # generate, edit, or create_variation
         }
         if custom_metadata:
             metadata.update(custom_metadata)
@@ -439,7 +441,7 @@ def track_images(
         # For images, we track as a custom event with estimated tokens
         # DALL-E doesn't report tokens, but we can estimate based on operation
         model = kwargs.get("model", "dall-e-2")
-        
+
         tracker.track_usage_background(
             customer_id=effective_customer_id,
             model=model,
@@ -447,7 +449,7 @@ def track_images(
             output_tokens=0,
             provider="openai",
             metadata=metadata,
-            **tracking_params
+            **tracking_params,
         )
     except Exception as e:
         logger.warning(f"Failed to track image generation: {e}")
@@ -461,7 +463,7 @@ def track_audio(
     args,
     kwargs,
     custom_metadata=None,
-    **tracking_params
+    **tracking_params,
 ):
     """Track audio operations (transcription, translation, TTS)"""
     try:
@@ -471,9 +473,11 @@ def track_audio(
             return
 
         metadata = {
-            "operation": method_name.split(".")[-1],  # transcriptions, translations, or speech
+            "operation": method_name.split(".")[
+                -1
+            ],  # transcriptions, translations, or speech
         }
-        
+
         # Different metadata based on operation type
         if "speech" in method_name:
             # Text-to-speech
@@ -487,7 +491,7 @@ def track_audio(
             if hasattr(result, "text"):
                 metadata["text_length"] = len(result.text)
             model = kwargs.get("model", "whisper-1")
-        
+
         if custom_metadata:
             metadata.update(custom_metadata)
 
@@ -499,7 +503,7 @@ def track_audio(
             output_tokens=0,
             provider="openai",
             metadata=metadata,
-            **tracking_params
+            **tracking_params,
         )
     except Exception as e:
         logger.warning(f"Failed to track audio operation: {e}")
@@ -513,7 +517,7 @@ def track_moderations(
     args,
     kwargs,
     custom_metadata=None,
-    **tracking_params
+    **tracking_params,
 ):
     """Track moderation API usage"""
     try:
@@ -524,7 +528,11 @@ def track_moderations(
 
         metadata = {
             "response_id": getattr(result, "id", None),
-            "flagged": any(r.flagged for r in result.results) if hasattr(result, "results") else False,
+            "flagged": (
+                any(r.flagged for r in result.results)
+                if hasattr(result, "results")
+                else False
+            ),
         }
         if custom_metadata:
             metadata.update(custom_metadata)
@@ -537,7 +545,7 @@ def track_moderations(
             output_tokens=0,
             provider="openai",
             metadata=metadata,
-            **tracking_params
+            **tracking_params,
         )
     except Exception as e:
         logger.warning(f"Failed to track moderation: {e}")
@@ -551,7 +559,7 @@ def track_fine_tuning(
     args,
     kwargs,
     custom_metadata=None,
-    **tracking_params
+    **tracking_params,
 ):
     """Track fine-tuning job creation"""
     try:
@@ -578,7 +586,7 @@ def track_fine_tuning(
             output_tokens=0,
             provider="openai",
             metadata=metadata,
-            **tracking_params
+            **tracking_params,
         )
     except Exception as e:
         logger.warning(f"Failed to track fine-tuning job: {e}")
@@ -592,7 +600,7 @@ def track_assistant_run(
     args,
     kwargs,
     custom_metadata=None,
-    **tracking_params
+    **tracking_params,
 ):
     """Track Assistant API run creation (which consumes tokens)"""
     try:
@@ -607,7 +615,7 @@ def track_assistant_run(
             "assistant_id": getattr(result, "assistant_id", None),
             "status": getattr(result, "status", None),
         }
-        
+
         # Check if usage data is available (it might be after polling)
         if hasattr(result, "usage") and result.usage:
             input_tokens = getattr(result.usage, "prompt_tokens", 0)
@@ -615,7 +623,7 @@ def track_assistant_run(
         else:
             input_tokens = 0
             output_tokens = 0
-            
+
         if custom_metadata:
             metadata.update(custom_metadata)
 
@@ -626,7 +634,7 @@ def track_assistant_run(
             output_tokens=output_tokens,
             provider="openai",
             metadata=metadata,
-            **tracking_params
+            **tracking_params,
         )
     except Exception as e:
         logger.warning(f"Failed to track assistant run: {e}")
@@ -637,26 +645,20 @@ OPENAI_TRACK_METHODS = {
     # Text generation
     "chat.completions.create": track_chat_completion,
     "completions.create": track_completion,
-    
     # Embeddings
     "embeddings.create": track_embeddings,
-    
     # Images (DALL-E)
     "images.generate": track_images,
     "images.edit": track_images,
     "images.create_variation": track_images,
-    
     # Audio (Whisper & TTS)
     "audio.transcriptions.create": track_audio,
     "audio.translations.create": track_audio,
     "audio.speech.create": track_audio,
-    
     # Moderation (free but worth tracking)
     "moderations.create": track_moderations,
-    
     # Fine-tuning
     "fine_tuning.jobs.create": track_fine_tuning,
-    
     # Assistants API (Beta) - only track operations that consume tokens
     "beta.threads.runs.create": track_assistant_run,
     "beta.threads.runs.create_and_poll": track_assistant_run,
