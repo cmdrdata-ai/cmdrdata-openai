@@ -1,0 +1,1046 @@
+============================= test session starts =============================
+platform win32 -- Python 3.13.0, pytest-8.4.1, pluggy-1.6.0 -- C:\Users\User\product\cmdrdata-openai\.venv\Scripts\python.exe
+cachedir: .pytest_cache
+rootdir: C:\Users\User\product\cmdrdata-openai
+configfile: pyproject.toml
+testpaths: tests
+plugins: anyio-4.9.0, asyncio-1.0.0, cov-6.2.1, mock-3.14.1
+asyncio: mode=Mode.AUTO, asyncio_default_fixture_loop_scope=None, asyncio_default_test_loop_scope=function
+collecting ... collected 296 items
+
+tests/test_async_client.py::TestAsyncTrackedOpenAI::test_initialization_success PASSED [  0%]
+tests/test_async_client.py::TestAsyncTrackedOpenAI::test_initialization_missing_tracker_key PASSED [  0%]
+tests/test_async_client.py::TestAsyncTrackedOpenAI::test_initialization_custom_endpoint PASSED [  1%]
+tests/test_async_client.py::TestAsyncTrackedOpenAI::test_get_openai_client PASSED [  1%]
+tests/test_async_client.py::TestAsyncTrackedOpenAI::test_get_tracker PASSED [  1%]
+tests/test_async_client.py::TestAsyncTrackedOpenAI::test_attribute_delegation PASSED [  2%]
+tests/test_async_client.py::TestAsyncTrackedChatCompletions::test_create_with_tracking_success PASSED [  2%]
+tests/test_async_client.py::TestAsyncTrackedChatCompletions::test_create_without_tracking PASSED [  2%]
+tests/test_async_client.py::TestAsyncTrackedChatCompletions::test_create_no_customer_id PASSED [  3%]
+tests/test_async_client.py::TestAsyncTrackedChatCompletions::test_create_no_usage_data PASSED [  3%]
+tests/test_async_client.py::TestAsyncTrackedCompletions::test_create_with_tracking_success PASSED [  3%]
+tests/test_async_client.py::TestAsyncTrackedChat::test_initialization PASSED [  4%]
+tests/test_basic_functionality.py::TestBasicFunctionality::test_api_key_validation_openai PASSED [  4%]
+tests/test_basic_functionality.py::TestBasicFunctionality::test_api_key_validation_cmdrdata PASSED [  4%]
+tests/test_basic_functionality.py::TestBasicFunctionality::test_api_key_validation_invalid PASSED [  5%]
+tests/test_basic_functionality.py::TestBasicFunctionality::test_input_sanitizer_basic PASSED [  5%]
+tests/test_basic_functionality.py::TestBasicFunctionality::test_input_sanitizer_removes_null_bytes PASSED [  5%]
+tests/test_basic_functionality.py::TestBasicFunctionality::test_retry_config_creation PASSED [  6%]
+tests/test_basic_functionality.py::TestBasicFunctionality::test_circuit_breaker_creation PASSED [  6%]
+tests/test_basic_functionality.py::TestBasicFunctionality::test_lru_cache_basic PASSED [  6%]
+tests/test_basic_functionality.py::TestBasicFunctionality::test_api_key_sanitization_for_logging PASSED [  7%]
+tests/test_basic_functionality.py::TestBasicFunctionality::test_url_validation_success PASSED [  7%]
+tests/test_basic_functionality.py::TestBasicFunctionality::test_url_validation_failure PASSED [  7%]
+tests/test_client.py::TestTrackedOpenAI::test_initialization_success PASSED [  8%]
+tests/test_client.py::TestTrackedOpenAI::test_initialization_missing_tracker_key PASSED [  8%]
+tests/test_client.py::TestTrackedOpenAI::test_initialization_invalid_api_key PASSED [  8%]
+tests/test_client.py::TestTrackedOpenAI::test_initialization_custom_endpoint PASSED [  9%]
+tests/test_client.py::TestTrackedOpenAI::test_get_openai_client PASSED   [  9%]
+tests/test_client.py::TestTrackedOpenAI::test_get_tracker PASSED         [  9%]
+tests/test_client.py::TestTrackedOpenAI::test_compatibility_check_warning FAILED [ 10%]
+tests/test_client.py::TestTrackedOpenAI::test_check_compatibility_method PASSED [ 10%]
+tests/test_client.py::TestTrackedOpenAI::test_check_compatibility_raise_on_incompatible PASSED [ 10%]
+tests/test_client.py::TestTrackedOpenAI::test_get_compatibility_info_method PASSED [ 11%]
+tests/test_client.py::TestTrackedOpenAIIntegration::test_proxy_method_delegation PASSED [ 11%]
+tests/test_client.py::TestTrackedOpenAIIntegration::test_tracked_method_with_usage_tracking PASSED [ 11%]
+tests/test_client.py::TestTrackedOpenAIIntegration::test_environment_variable_initialization PASSED [ 12%]
+tests/test_context.py::test_basic_context_operations PASSED              [ 12%]
+tests/test_context.py::test_context_manager PASSED                       [ 12%]
+tests/test_context.py::test_effective_customer_id_priority PASSED        [ 13%]
+tests/test_context.py::test_nested_context_managers PASSED               [ 13%]
+tests/test_context.py::test_context_isolation PASSED                     [ 13%]
+tests/test_exceptions.py::TestCmdrDataError::test_basic_initialization PASSED [ 14%]
+tests/test_exceptions.py::TestCmdrDataError::test_initialization_with_error_code PASSED [ 14%]
+tests/test_exceptions.py::TestCmdrDataError::test_initialization_with_details PASSED [ 14%]
+tests/test_exceptions.py::TestCmdrDataError::test_initialization_with_all_parameters PASSED [ 15%]
+tests/test_exceptions.py::TestCmdrDataError::test_details_default_value PASSED [ 15%]
+tests/test_exceptions.py::TestSpecificExceptions::test_configuration_error_inheritance PASSED [ 15%]
+tests/test_exceptions.py::TestSpecificExceptions::test_authentication_error_inheritance PASSED [ 16%]
+tests/test_exceptions.py::TestSpecificExceptions::test_validation_error_inheritance PASSED [ 16%]
+tests/test_exceptions.py::TestSpecificExceptions::test_rate_limit_error_inheritance PASSED [ 16%]
+tests/test_exceptions.py::TestSpecificExceptions::test_tracking_error_inheritance PASSED [ 17%]
+tests/test_exceptions.py::TestSpecificExceptions::test_network_error_inheritance PASSED [ 17%]
+tests/test_exceptions.py::TestSpecificExceptions::test_timeout_error_inheritance PASSED [ 17%]
+tests/test_exceptions.py::TestSpecificExceptions::test_retry_exhausted_error_inheritance PASSED [ 18%]
+tests/test_exceptions.py::TestSpecificExceptions::test_circuit_breaker_error_inheritance PASSED [ 18%]
+tests/test_exceptions.py::TestSpecificExceptions::test_security_error_inheritance PASSED [ 18%]
+tests/test_exceptions.py::TestSpecificExceptions::test_compatibility_error_inheritance PASSED [ 19%]
+tests/test_exceptions.py::TestExceptionUsage::test_validation_error_with_field_details PASSED [ 19%]
+tests/test_exceptions.py::TestExceptionUsage::test_network_error_with_retry_details PASSED [ 19%]
+tests/test_exceptions.py::TestExceptionUsage::test_rate_limit_error_with_timing_details PASSED [ 20%]
+tests/test_exceptions.py::TestExceptionUsage::test_authentication_error_with_key_details PASSED [ 20%]
+tests/test_exceptions.py::TestExceptionUsage::test_circuit_breaker_error_with_state_details PASSED [ 20%]
+tests/test_exceptions.py::TestExceptionUsage::test_retry_exhausted_error_with_attempt_details PASSED [ 21%]
+tests/test_exceptions.py::TestExceptionChaining::test_exception_can_be_raised_and_caught PASSED [ 21%]
+tests/test_exceptions.py::TestExceptionChaining::test_exception_chaining_with_cause PASSED [ 21%]
+tests/test_exceptions.py::TestExceptionChaining::test_multiple_exception_types_in_try_except PASSED [ 22%]
+tests/test_exceptions.py::TestExceptionChaining::test_exception_hierarchy_catching PASSED [ 22%]
+tests/test_logging_config.py::TestStructuredFormatter::test_basic_log_formatting PASSED [ 22%]
+tests/test_logging_config.py::TestStructuredFormatter::test_log_formatting_with_custom_fields PASSED [ 23%]
+tests/test_logging_config.py::TestStructuredFormatter::test_log_formatting_with_extra_fields PASSED [ 23%]
+tests/test_logging_config.py::TestStructuredFormatter::test_log_formatting_with_exception PASSED [ 23%]
+tests/test_logging_config.py::TestSecurityFormatter::test_api_key_sanitization PASSED [ 24%]
+tests/test_logging_config.py::TestSecurityFormatter::test_no_sanitization_for_safe_content PASSED [ 24%]
+tests/test_logging_config.py::TestSecurityFormatter::test_multiple_sensitive_patterns PASSED [ 25%]
+tests/test_logging_config.py::TestLoggingConfig::test_default_configuration PASSED [ 25%]
+tests/test_logging_config.py::TestLoggingConfig::test_custom_log_level PASSED [ 25%]
+tests/test_logging_config.py::TestLoggingConfig::test_structured_format PASSED [ 26%]
+tests/test_logging_config.py::TestLoggingConfig::test_standard_format PASSED [ 26%]
+tests/test_logging_config.py::TestLoggingConfig::test_file_logging PASSED [ 26%]
+tests/test_logging_config.py::TestLoggingConfig::test_console_logging_disabled PASSED [ 27%]
+tests/test_logging_config.py::TestLoggingConfig::test_security_mode_enabled PASSED [ 27%]
+tests/test_logging_config.py::TestLoggingConfig::test_invalid_log_file_path PASSED [ 27%]
+tests/test_logging_config.py::TestRequestLogger::test_request_logger_context PASSED [ 28%]
+tests/test_logging_config.py::TestRequestLogger::test_request_logger_cleanup PASSED [ 28%]
+tests/test_logging_config.py::TestLogPerformanceDecorator::test_log_performance_success PASSED [ 28%]
+tests/test_logging_config.py::TestLogPerformanceDecorator::test_log_performance_error PASSED [ 29%]
+tests/test_logging_config.py::TestUtilityFunctions::test_get_logger PASSED [ 29%]
+tests/test_logging_config.py::TestUtilityFunctions::test_configure_logging PASSED [ 29%]
+tests/test_logging_config.py::TestUtilityFunctions::test_default_logging_config_values PASSED [ 30%]
+tests/test_performance.py::TestCacheEntry::test_cache_entry_creation PASSED [ 30%]
+tests/test_performance.py::TestCacheEntry::test_cache_entry_is_expired PASSED [ 30%]
+tests/test_performance.py::TestCacheEntry::test_cache_entry_touch PASSED [ 31%]
+tests/test_performance.py::TestLRUCache::test_lru_cache_basic_operations PASSED [ 31%]
+tests/test_performance.py::TestLRUCache::test_lru_cache_eviction PASSED  [ 31%]
+tests/test_performance.py::TestLRUCache::test_lru_cache_ttl PASSED       [ 32%]
+tests/test_performance.py::TestLRUCache::test_lru_cache_custom_ttl PASSED [ 32%]
+tests/test_performance.py::TestLRUCache::test_lru_cache_clear PASSED     [ 32%]
+tests/test_performance.py::TestLRUCache::test_lru_cache_stats PASSED     [ 33%]
+tests/test_performance.py::TestLRUCache::test_lru_cache_thread_safety PASSED [ 33%]
+tests/test_performance.py::TestConnectionPool::test_connection_pool_get_return PASSED [ 33%]
+tests/test_performance.py::TestConnectionPool::test_connection_pool_max_keepalive PASSED [ 34%]
+tests/test_performance.py::TestConnectionPool::test_connection_pool_clear PASSED [ 34%]
+tests/test_performance.py::TestRequestBatcher::test_request_batcher_basic PASSED [ 34%]
+tests/test_performance.py::TestRequestBatcher::test_request_batcher_batch_size_trigger PASSED [ 35%]
+tests/test_performance.py::TestRequestBatcher::test_request_batcher_error_handling PASSED [ 35%]
+tests/test_performance.py::TestRateLimiter::test_rate_limiter_token_bucket PASSED [ 35%]
+tests/test_performance.py::TestRateLimiter::test_rate_limiter_token_replenishment PASSED [ 36%]
+tests/test_performance.py::TestRateLimiter::test_rate_limiter_multiple_tokens PASSED [ 36%]
+tests/test_performance.py::TestRateLimiter::test_rate_limiter_async_acquire PASSED [ 36%]
+tests/test_performance.py::TestPerformanceMonitor::test_performance_monitor_metrics PASSED [ 37%]
+tests/test_performance.py::TestPerformanceMonitor::test_performance_monitor_counters PASSED [ 37%]
+tests/test_performance.py::TestPerformanceMonitor::test_performance_monitor_window_size PASSED [ 37%]
+tests/test_performance.py::TestPerformanceDecorators::test_cached_decorator PASSED [ 38%]
+tests/test_performance.py::TestPerformanceDecorators::test_timed_decorator PASSED [ 38%]
+tests/test_performance.py::TestPerformanceDecorators::test_performance_context PASSED [ 38%]
+tests/test_performance.py::TestPerformanceUtilities::test_get_cache_stats PASSED [ 39%]
+tests/test_performance.py::TestPerformanceUtilities::test_clear_cache PASSED [ 39%]
+tests/test_performance.py::TestPerformanceUtilities::test_configure_performance PASSED [ 39%]
+tests/test_proxy.py::TestTrackedProxy::test_proxy_initialization PASSED  [ 40%]
+tests/test_proxy.py::TestTrackedProxy::test_getattr_simple_attribute PASSED [ 40%]
+tests/test_proxy.py::TestTrackedProxy::test_getattr_tracked_method PASSED [ 40%]
+tests/test_proxy.py::TestTrackedProxy::test_getattr_nested_attributes PASSED [ 41%]
+tests/test_proxy.py::TestTrackedProxy::test_getattr_nonexistent_attribute PASSED [ 41%]
+tests/test_proxy.py::TestTrackedProxy::test_setattr_client_attribute PASSED [ 41%]
+tests/test_proxy.py::TestTrackedProxy::test_setattr_private_attribute PASSED [ 42%]
+tests/test_proxy.py::TestTrackedProxy::test_dir_method PASSED            [ 42%]
+tests/test_proxy.py::TestTrackedProxy::test_wrap_method_basic PASSED     [ 42%]
+tests/test_proxy.py::TestTrackedProxy::test_wrap_method_with_tracking_parameters PASSED [ 43%]
+tests/test_proxy.py::TestTrackedProxy::test_wrap_method_tracking_disabled PASSED [ 43%]
+tests/test_proxy.py::TestTrackedProxy::test_wrap_method_preserves_signature PASSED [ 43%]
+tests/test_proxy.py::TestTrackedProxy::test_wrap_method_exception_handling FAILED [ 44%]
+tests/test_proxy.py::TestTrackedProxy::test_wrap_method_tracker_exception_handling PASSED [ 44%]
+tests/test_proxy.py::TestTrackedProxy::test_repr_method PASSED           [ 44%]
+tests/test_proxy.py::TestTrackingFunctions::test_track_chat_completion_success PASSED [ 45%]
+tests/test_proxy.py::TestTrackingFunctions::test_track_chat_completion_no_customer_id PASSED [ 45%]
+tests/test_proxy.py::TestTrackingFunctions::test_track_chat_completion_no_usage_data PASSED [ 45%]
+tests/test_proxy.py::TestTrackingFunctions::test_track_chat_completion_exception_handling PASSED [ 46%]
+tests/test_proxy.py::TestTrackingFunctions::test_track_completion_success PASSED [ 46%]
+tests/test_proxy.py::TestOpenAITrackMethods::test_openai_track_methods_configuration PASSED [ 46%]
+tests/test_retry.py::TestRetryConfig::test_retry_config_initialization_defaults PASSED [ 47%]
+tests/test_retry.py::TestRetryConfig::test_retry_config_initialization_custom PASSED [ 47%]
+tests/test_retry.py::TestRetryConfig::test_calculate_delay_fixed_interval PASSED [ 47%]
+tests/test_retry.py::TestRetryConfig::test_calculate_delay_linear_backoff PASSED [ 48%]
+tests/test_retry.py::TestRetryConfig::test_calculate_delay_exponential_backoff PASSED [ 48%]
+tests/test_retry.py::TestRetryConfig::test_calculate_delay_max_delay_limit PASSED [ 48%]
+tests/test_retry.py::TestRetryConfig::test_calculate_delay_with_jitter PASSED [ 49%]
+tests/test_retry.py::TestRetryConfig::test_calculate_delay_jitter_policy PASSED [ 49%]
+tests/test_retry.py::TestRetryConfig::test_should_retry_with_retryable_exceptions PASSED [ 50%]
+tests/test_retry.py::TestRetryConfig::test_should_retry_with_exception_hierarchy PASSED [ 50%]
+tests/test_retry.py::TestCircuitBreaker::test_circuit_breaker_initialization PASSED [ 50%]
+tests/test_retry.py::TestCircuitBreaker::test_circuit_breaker_successful_execution PASSED [ 51%]
+tests/test_retry.py::TestCircuitBreaker::test_circuit_breaker_failure_counting PASSED [ 51%]
+tests/test_retry.py::TestCircuitBreaker::test_circuit_breaker_open_state_rejection PASSED [ 51%]
+tests/test_retry.py::TestCircuitBreaker::test_circuit_breaker_half_open_recovery PASSED [ 52%]
+tests/test_retry.py::TestCircuitBreaker::test_circuit_breaker_half_open_failure PASSED [ 52%]
+tests/test_retry.py::TestRetryDecorator::test_retry_decorator_async_success PASSED [ 52%]
+tests/test_retry.py::TestRetryDecorator::test_retry_decorator_async_eventual_success PASSED [ 53%]
+tests/test_retry.py::TestRetryDecorator::test_retry_decorator_async_max_attempts_exceeded PASSED [ 53%]
+tests/test_retry.py::TestRetryDecorator::test_retry_decorator_async_non_retryable_exception PASSED [ 53%]
+tests/test_retry.py::TestRetryDecorator::test_retry_decorator_sync_success PASSED [ 54%]
+tests/test_retry.py::TestRetryDecorator::test_retry_decorator_sync_eventual_success PASSED [ 54%]
+tests/test_retry.py::TestRetryDecorator::test_retry_decorator_sync_max_attempts_exceeded PASSED [ 54%]
+tests/test_retry.py::TestRetryDecorator::test_retry_decorator_with_circuit_breaker PASSED [ 55%]
+tests/test_retry.py::TestDefaultConfigurations::test_default_retry_config PASSED [ 55%]
+tests/test_retry.py::TestDefaultConfigurations::test_aggressive_retry_config PASSED [ 55%]
+tests/test_retry.py::TestDefaultConfigurations::test_conservative_retry_config PASSED [ 56%]
+tests/test_retry.py::TestDefaultConfigurations::test_default_circuit_breaker PASSED [ 56%]
+tests/test_security.py::TestAPIKeyManager::test_validate_openai_api_key_success PASSED [ 56%]
+tests/test_security.py::TestAPIKeyManager::test_validate_cmdrdata_api_key_success PASSED [ 57%]
+tests/test_security.py::TestAPIKeyManager::test_validate_api_key_empty_string PASSED [ 57%]
+tests/test_security.py::TestAPIKeyManager::test_validate_api_key_none PASSED [ 57%]
+tests/test_security.py::TestAPIKeyManager::test_validate_api_key_too_short PASSED [ 58%]
+tests/test_security.py::TestAPIKeyManager::test_validate_api_key_too_long PASSED [ 58%]
+tests/test_security.py::TestAPIKeyManager::test_validate_api_key_suspicious_patterns PASSED [ 58%]
+tests/test_security.py::TestAPIKeyManager::test_validate_api_key_invalid_format PASSED [ 59%]
+tests/test_security.py::TestAPIKeyManager::test_sanitize_api_key_for_logging PASSED [ 59%]
+tests/test_security.py::TestAPIKeyManager::test_generate_tracking_key PASSED [ 59%]
+tests/test_security.py::TestAPIKeyManager::test_hash_and_verify_api_key PASSED [ 60%]
+tests/test_security.py::TestInputSanitizer::test_sanitize_string_basic PASSED [ 60%]
+tests/test_security.py::TestInputSanitizer::test_sanitize_string_remove_suspicious PASSED [ 60%]
+tests/test_security.py::TestInputSanitizer::test_sanitize_string_strict_mode PASSED [ 61%]
+tests/test_security.py::TestInputSanitizer::test_sanitize_string_length_limit PASSED [ 61%]
+tests/test_security.py::TestInputSanitizer::test_sanitize_string_strict_length_limit PASSED [ 61%]
+tests/test_security.py::TestInputSanitizer::test_sanitize_string_pattern_validation PASSED [ 62%]
+tests/test_security.py::TestInputSanitizer::test_sanitize_string_non_string_input PASSED [ 62%]
+tests/test_security.py::TestInputSanitizer::test_validate_url_valid PASSED [ 62%]
+tests/test_security.py::TestInputSanitizer::test_validate_url_invalid_scheme PASSED [ 63%]
+tests/test_security.py::TestInputSanitizer::test_validate_url_custom_schemes PASSED [ 63%]
+tests/test_security.py::TestInputSanitizer::test_validate_url_suspicious_patterns PASSED [ 63%]
+tests/test_security.py::TestInputSanitizer::test_validate_url_too_long PASSED [ 64%]
+tests/test_security.py::TestInputSanitizer::test_validate_url_private_ip_production PASSED [ 64%]
+tests/test_security.py::TestInputSanitizer::test_sanitize_metadata_valid PASSED [ 64%]
+tests/test_security.py::TestInputSanitizer::test_sanitize_metadata_invalid_type PASSED [ 65%]
+tests/test_security.py::TestInputSanitizer::test_sanitize_metadata_non_string_keys PASSED [ 65%]
+tests/test_security.py::TestInputSanitizer::test_sanitize_metadata_too_large PASSED [ 65%]
+tests/test_security.py::TestInputSanitizer::test_sanitize_metadata_suspicious_content PASSED [ 66%]
+tests/test_security.py::TestRateLimiter::test_rate_limiter_allows_requests PASSED [ 66%]
+tests/test_security.py::TestRateLimiter::test_rate_limiter_different_identifiers PASSED [ 66%]
+tests/test_security.py::TestRateLimiter::test_rate_limiter_window_reset PASSED [ 67%]
+tests/test_security.py::TestRateLimiter::test_rate_limiter_get_reset_time PASSED [ 67%]
+tests/test_security.py::TestSecurityDecorators::test_require_valid_api_key_decorator PASSED [ 67%]
+tests/test_security.py::TestSecurityDecorators::test_rate_limited_decorator PASSED [ 68%]
+tests/test_security.py::TestSecurityUtilities::test_secure_compare PASSED [ 68%]
+tests/test_security.py::TestSecurityUtilities::test_generate_secure_token PASSED [ 68%]
+tests/test_security.py::TestSecurityUtilities::test_validate_request_signature PASSED [ 69%]
+tests/test_security.py::TestSecurityConfig::test_security_config_defaults PASSED [ 69%]
+tests/test_security.py::TestSecurityConfig::test_security_config_environment_override PASSED [ 69%]
+tests/test_tracker.py::TestUsageTracker::test_initialization_success PASSED [ 70%]
+tests/test_tracker.py::TestUsageTracker::test_initialization_missing_api_key PASSED [ 70%]
+tests/test_tracker.py::TestUsageTracker::test_initialization_invalid_api_key_format PASSED [ 70%]
+tests/test_tracker.py::TestUsageTracker::test_initialization_missing_endpoint PASSED [ 71%]
+tests/test_tracker.py::TestUsageTracker::test_initialization_invalid_endpoint PASSED [ 71%]
+tests/test_tracker.py::TestUsageTracker::test_initialization_invalid_timeout PASSED [ 71%]
+tests/test_tracker.py::TestUsageTracker::test_initialization_default_values FAILED [ 72%]
+tests/test_tracker.py::TestUsageTracker::test_validate_tracking_inputs_success PASSED [ 72%]
+tests/test_tracker.py::TestUsageTracker::test_validate_tracking_inputs_missing_customer_id PASSED [ 72%]
+tests/test_tracker.py::TestUsageTracker::test_validate_tracking_inputs_invalid_tokens PASSED [ 73%]
+tests/test_tracker.py::TestUsageTracker::test_validate_tracking_inputs_invalid_metadata PASSED [ 73%]
+tests/test_tracker.py::TestUsageTracker::test_sanitize_tracking_data FAILED [ 73%]
+tests/test_tracker.py::TestUsageTracker::test_track_usage_with_retry_success_httpx PASSED [ 74%]
+tests/test_tracker.py::TestUsageTracker::test_track_usage_with_retry_success_requests PASSED [ 74%]
+tests/test_tracker.py::TestUsageTracker::test_track_usage_with_retry_rate_limited FAILED [ 75%]
+tests/test_tracker.py::TestUsageTracker::test_track_usage_with_retry_server_error FAILED [ 75%]
+tests/test_tracker.py::TestUsageTracker::test_track_usage_with_retry_client_error FAILED [ 75%]
+tests/test_tracker.py::TestUsageTracker::test_track_usage_with_retry_network_error PASSED [ 76%]
+tests/test_tracker.py::TestUsageTracker::test_track_usage_retry_on_server_error_then_success PASSED [ 76%]
+tests/test_tracker.py::TestUsageTracker::test_track_usage_no_retry_on_client_error FAILED [ 76%]
+tests/test_tracker.py::TestUsageTracker::test_track_usage_exhausts_retries PASSED [ 77%]
+tests/test_tracker.py::TestUsageTracker::test_track_usage_success PASSED [ 77%]
+tests/test_tracker.py::TestUsageTracker::test_track_usage_validation_error PASSED [ 77%]
+tests/test_tracker.py::TestUsageTracker::test_track_usage_async_success PASSED [ 78%]
+tests/test_tracker.py::TestUsageTracker::test_track_usage_async_fallback PASSED [ 78%]
+tests/test_tracker.py::TestUsageTracker::test_track_usage_background PASSED [ 78%]
+tests/test_tracker.py::TestUsageTracker::test_get_health_status PASSED   [ 79%]
+tests/test_tracker.py::TestUsageTracker::test_cleanup_on_deletion PASSED [ 79%]
+tests/test_tracker.py::TestUsageTrackerIntegration::test_full_tracking_flow_success FAILED [ 79%]
+tests/test_validation.py::TestAPIKeyManager::test_validate_api_key_openai_success PASSED [ 80%]
+tests/test_validation.py::TestAPIKeyManager::test_validate_api_key_cmdrdata_success PASSED [ 80%]
+tests/test_validation.py::TestAPIKeyManager::test_validate_api_key_generic_success PASSED [ 80%]
+tests/test_validation.py::TestAPIKeyManager::test_validate_api_key_empty_string PASSED [ 81%]
+tests/test_validation.py::TestAPIKeyManager::test_validate_api_key_none PASSED [ 81%]
+tests/test_validation.py::TestAPIKeyManager::test_validate_api_key_suspicious_patterns PASSED [ 81%]
+tests/test_validation.py::TestAPIKeyManager::test_validate_api_key_invalid_format PASSED [ 82%]
+tests/test_validation.py::TestAPIKeyManager::test_validate_customer_id_success PASSED [ 82%]
+tests/test_validation.py::TestAPIKeyManager::test_validate_customer_id_empty_string PASSED [ 82%]
+tests/test_validation.py::TestAPIKeyManager::test_validate_customer_id_too_long PASSED [ 83%]
+tests/test_validation.py::TestAPIKeyManager::test_validate_customer_id_suspicious_patterns PASSED [ 83%]
+tests/test_validation.py::TestAPIKeyManager::test_validate_customer_id_invalid_characters PASSED [ 83%]
+tests/test_validation.py::TestAPIKeyManager::test_validate_url_success PASSED [ 84%]
+tests/test_validation.py::TestAPIKeyManager::test_validate_url_empty_string PASSED [ 84%]
+tests/test_validation.py::TestAPIKeyManager::test_validate_url_invalid_scheme PASSED [ 84%]
+tests/test_validation.py::TestAPIKeyManager::test_validate_url_suspicious_patterns PASSED [ 85%]
+tests/test_validation.py::TestAPIKeyManager::test_validate_url_malformed PASSED [ 85%]
+tests/test_validation.py::TestAPIKeyManager::test_validate_timeout_success PASSED [ 85%]
+tests/test_validation.py::TestAPIKeyManager::test_validate_timeout_invalid_type PASSED [ 86%]
+tests/test_validation.py::TestAPIKeyManager::test_validate_timeout_negative PASSED [ 86%]
+tests/test_validation.py::TestAPIKeyManager::test_validate_timeout_too_large PASSED [ 86%]
+tests/test_validation.py::TestAPIKeyManager::test_validate_model_name_success PASSED [ 87%]
+tests/test_validation.py::TestAPIKeyManager::test_validate_model_name_empty_string PASSED [ 87%]
+tests/test_validation.py::TestAPIKeyManager::test_validate_model_name_suspicious_patterns PASSED [ 87%]
+tests/test_validation.py::TestAPIKeyManager::test_validate_model_name_invalid_characters PASSED [ 88%]
+tests/test_validation.py::TestAPIKeyManager::test_validate_token_count_success PASSED [ 88%]
+tests/test_validation.py::TestAPIKeyManager::test_validate_token_count_invalid_type PASSED [ 88%]
+tests/test_validation.py::TestAPIKeyManager::test_validate_token_count_negative PASSED [ 89%]
+tests/test_validation.py::TestAPIKeyManager::test_validate_token_count_too_large PASSED [ 89%]
+tests/test_validation.py::TestAPIKeyManager::test_validate_metadata_success PASSED [ 89%]
+tests/test_validation.py::TestAPIKeyManager::test_validate_metadata_invalid_type PASSED [ 90%]
+tests/test_validation.py::TestAPIKeyManager::test_validate_metadata_too_large PASSED [ 90%]
+tests/test_validation.py::TestAPIKeyManager::test_validate_metadata_non_string_keys PASSED [ 90%]
+tests/test_validation.py::TestAPIKeyManager::test_validate_metadata_suspicious_keys PASSED [ 91%]
+tests/test_validation.py::TestAPIKeyManager::test_validate_metadata_suspicious_values PASSED [ 91%]
+tests/test_validation.py::TestAPIKeyManager::test_sanitize_string_basic PASSED [ 91%]
+tests/test_validation.py::TestAPIKeyManager::test_sanitize_string_with_null_bytes PASSED [ 92%]
+tests/test_validation.py::TestAPIKeyManager::test_sanitize_string_truncation PASSED [ 92%]
+tests/test_validation.py::TestAPIKeyManager::test_sanitize_string_non_string_input PASSED [ 92%]
+tests/test_validation.py::TestAPIKeyManager::test_validate_chat_messages_success PASSED [ 93%]
+tests/test_validation.py::TestAPIKeyManager::test_validate_chat_messages_empty_list PASSED [ 93%]
+tests/test_validation.py::TestAPIKeyManager::test_validate_chat_messages_invalid_type PASSED [ 93%]
+tests/test_validation.py::TestAPIKeyManager::test_validate_chat_messages_invalid_message_type PASSED [ 94%]
+tests/test_validation.py::TestAPIKeyManager::test_validate_chat_messages_missing_role PASSED [ 94%]
+tests/test_validation.py::TestAPIKeyManager::test_validate_chat_messages_invalid_role PASSED [ 94%]
+tests/test_validation.py::TestAPIKeyManager::test_validate_chat_messages_missing_content PASSED [ 95%]
+tests/test_validation.py::TestAPIKeyManager::test_validate_chat_messages_non_string_content PASSED [ 95%]
+tests/test_validation.py::TestAPIKeyManager::test_validate_chat_messages_suspicious_content PASSED [ 95%]
+tests/test_validation.py::TestValidateInputDecorator::test_validate_input_decorator_success PASSED [ 96%]
+tests/test_validation.py::TestValidateInputDecorator::test_validate_input_decorator_validation_error PASSED [ 96%]
+tests/test_validation.py::TestValidateInputDecorator::test_validate_input_decorator_security_error PASSED [ 96%]
+tests/test_validation.py::TestValidateInputDecorator::test_validate_input_decorator_unexpected_error PASSED [ 97%]
+tests/test_version_compat.py::test_compatibility_info_structure PASSED   [ 97%]
+tests/test_version_compat.py::test_openai_version_detection PASSED       [ 97%]
+tests/test_version_compat.py::test_unsupported_openai_version PASSED     [ 98%]
+tests/test_version_compat.py::test_missing_openai PASSED                 [ 98%]
+tests/test_version_compat.py::test_check_compatibility_function PASSED   [ 98%]
+tests/test_version_compat.py::test_version_warnings PASSED               [ 99%]
+tests/test_version_compat.py::test_python_version_support PASSED         [ 99%]
+tests/test_version_compat.py::test_compatibility_with_fallback_version FAILED [100%]
+
+================================== FAILURES ===================================
+_____________ TestTrackedOpenAI.test_compatibility_check_warning ______________
+
+self = <tests.test_client.TestTrackedOpenAI object at 0x000001C4F329F790>
+
+    def test_compatibility_check_warning(self):
+        """Test compatibility warning mechanism"""
+        # Since the module is already imported, just verify that warnings can be emitted
+        from cmdrdata_openai.version_compat import VersionCompatibility
+        import warnings
+
+        # Create a new instance which will trigger the version check
+        with warnings.catch_warnings(record=True) as w:
+            warnings.simplefilter("always")
+            compat = VersionCompatibility()
+
+            # Check if any warnings were emitted during initialization
+>           assert len(w) > 0
+E           assert 0 > 0
+E            +  where 0 = len([])
+
+tests\test_client.py:125: AssertionError
+____________ TestTrackedProxy.test_wrap_method_exception_handling _____________
+
+self = <Mock id='1945410898304'>
+
+    def assert_not_called(self):
+        """assert that the mock was never called.
+        """
+        if self.call_count != 0:
+            msg = ("Expected '%s' to not have been called. Called %s times.%s"
+                   % (self._mock_name or 'mock',
+                      self.call_count,
+                      self._calls_repr()))
+>           raise AssertionError(msg)
+E           AssertionError: Expected 'mock' to not have been called. Called 1 times.
+E           Calls: [call(result=None, customer_id=None, tracker=<Mock spec='UsageTracker' id='1945410897296'>, method_name='test_method', args=(), kwargs={}, custom_metadata=None, request_start_time=1752764620.9668002, request_end_time=1752764620.9668033, error_occurred=True, error_type='unknown_error', error_code=None, error_message='Method failed', request_id='784ccd90-0519-4eff-a938-68f149f550c9', streaming=False, retry_count=0, time_to_first_token_ms=None)].
+
+..\..\appdata\local\programs\python\python313\Lib\unittest\mock.py:938: AssertionError
+
+During handling of the above exception, another exception occurred:
+
+self = <tests.test_proxy.TestTrackedProxy object at 0x000001C4F3527850>
+
+    def test_wrap_method_exception_handling(self):
+        """Test _wrap_method handles exceptions properly"""
+        def failing_method():
+            raise ValueError("Method failed")
+
+        mock_tracker_func = Mock()
+
+        proxy = TrackedProxy(
+            client=self.mock_client,
+            tracker=self.mock_tracker,
+            track_methods={'test_method': mock_tracker_func}
+        )
+
+        wrapped = proxy._wrap_method(failing_method, 'test_method')
+
+        # Call should raise the original exception
+        with pytest.raises(ValueError, match="Method failed"):
+            wrapped()
+
+        # Tracker should not be called when method fails
+>       mock_tracker_func.assert_not_called()
+E       AssertionError: Expected 'mock' to not have been called. Called 1 times.
+E       Calls: [call(result=None, customer_id=None, tracker=<Mock spec='UsageTracker' id='1945410897296'>, method_name='test_method', args=(), kwargs={}, custom_metadata=None, request_start_time=1752764620.9668002, request_end_time=1752764620.9668033, error_occurred=True, error_type='unknown_error', error_code=None, error_message='Method failed', request_id='784ccd90-0519-4eff-a938-68f149f550c9', streaming=False, retry_count=0, time_to_first_token_ms=None)].
+E
+E       pytest introspection follows:
+E
+E       Kwargs:
+E       assert {'args': (), ...e': None, ...} == {}
+E
+E         Left contains 17 more items:
+E         {'args': (),
+E          'custom_metadata': None,
+E          'customer_id': None,
+E          'error_code': None,
+E          'error_message': 'Method failed',...
+E
+E         ...Full output truncated (34 lines hidden), use '-vv' to show
+
+tests\test_proxy.py:294: AssertionError
+_____________ TestUsageTracker.test_initialization_default_values _____________
+
+self = <tests.test_tracker.TestUsageTracker object at 0x000001C4F35099D0>
+
+    def test_initialization_default_values(self):
+        """Test initialization with default values"""
+        tracker = UsageTracker(api_key=self.valid_api_key)
+
+>       assert tracker.endpoint == "https://www.cmdrdata.ai/api/events"
+E       AssertionError: assert 'https://api..../async/events' == 'https://www....ai/api/events'
+E
+E         - https://www.cmdrdata.ai/api/events
+E         ?         ^^^
+E         + https://api.cmdrdata.ai/api/async/events
+E         ?         ^^^                 ++++++
+
+tests\test_tracker.py:75: AssertionError
+---------------------------- Captured stderr call -----------------------------
+WARNING:cmdrdata_openai.cmdrdata_openai.security:Using legacy cmdrdata API key format
+------------------------------ Captured log call ------------------------------
+WARNING  cmdrdata_openai.cmdrdata_openai.security:security.py:127 Using legacy cmdrdata API key format
+________________ TestUsageTracker.test_sanitize_tracking_data _________________
+
+self = <tests.test_tracker.TestUsageTracker object at 0x000001C4F35AA0B0>
+
+    def test_sanitize_tracking_data(self):
+        """Test data sanitization"""
+        tracker = UsageTracker(api_key=self.valid_api_key)
+
+        metadata = {"key1": "value1", "key2": 123}
+        timestamp = datetime.utcnow()
+
+        sanitized = tracker._sanitize_tracking_data(
+            customer_id=self.customer_id,
+            model=self.model,
+            input_tokens=self.input_tokens,
+            output_tokens=self.output_tokens,
+            provider="openai",
+            metadata=metadata,
+            timestamp=timestamp
+        )
+
+        assert sanitized["customer_id"] == self.customer_id
+        assert sanitized["model"] == self.model
+        assert sanitized["input_tokens"] == self.input_tokens
+        assert sanitized["output_tokens"] == self.output_tokens
+        assert sanitized["total_tokens"] == self.input_tokens + self.output_tokens
+        assert sanitized["provider"] == "openai"
+        assert sanitized["metadata"] == metadata
+>       assert sanitized["timestamp"] == timestamp.isoformat()
+E       AssertionError: assert 1752789823 == '2025-07-17T15:03:43.472972'
+E        +  where '2025-07-17T15:03:43.472972' = <built-in method isoformat of datetime.datetime object at 0x000001C4F3823C60>()
+E        +    where <built-in method isoformat of datetime.datetime object at 0x000001C4F3823C60> = datetime.datetime(2025, 7, 17, 15, 3, 43, 472972).isoformat
+
+tests\test_tracker.py:159: AssertionError
+---------------------------- Captured stderr call -----------------------------
+WARNING:cmdrdata_openai.cmdrdata_openai.security:Using legacy cmdrdata API key format
+------------------------------ Captured log call ------------------------------
+WARNING  cmdrdata_openai.cmdrdata_openai.security:security.py:127 Using legacy cmdrdata API key format
+__________ TestUsageTracker.test_track_usage_with_retry_rate_limited __________
+cmdrdata_openai.exceptions.NetworkError: Server error: 429
+
+The above exception was the direct cause of the following exception:
+
+self = <tests.test_tracker.TestUsageTracker object at 0x000001C4F3558A10>
+mock_httpx = <MagicMock name='httpx' id='1945411291184'>
+
+    @patch('cmdrdata_openai.tracker.httpx')
+    def test_track_usage_with_retry_rate_limited(self, mock_httpx):
+        """Test usage tracking with rate limit response"""
+        tracker = UsageTracker(api_key=self.valid_api_key)
+
+        # Mock httpx client and rate limit response
+        mock_client = Mock()
+        mock_response = Mock()
+        mock_response.status_code = 429
+        mock_client.post.return_value = mock_response
+        mock_httpx.Client.return_value.__enter__.return_value = mock_client
+
+        event_data = {"test": "data"}
+
+        with pytest.raises(NetworkError, match="Rate limited"):
+>           tracker._track_usage_with_retry(event_data)
+
+tests\test_tracker.py:245:
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <cmdrdata_openai.tracker.UsageTracker object at 0x000001C4F37753D0>
+event_data = {'test': 'data'}
+
+    def _track_usage_with_retry(self, event_data: Dict[str, Any]) -> bool:
+        """Track usage with exponential backoff retry logic"""
+        last_exception = None
+        for attempt in range(self.max_retries + 1):
+            try:
+                if httpx:
+                    with httpx.Client(timeout=self.timeout) as client:
+                        response = client.post(
+                            self.endpoint, json=event_data, headers=self.headers
+                        )
+
+                        if response.status_code == 200:
+                            return True
+                        # Retry on server errors (5xx) and rate limiting (429)
+                        elif response.status_code >= 500 or response.status_code == 429:
+                            last_exception = NetworkError(f"Server error: {response.status_code}")
+                            logger.warning(f"Attempt {attempt + 1} failed: {last_exception}")
+                        # Do not retry on other client errors (4xx)
+                        elif response.status_code >= 400:
+                            raise TrackingError(f"Client error: {response.status_code} {response.text}")
+                        else:
+                            return False # Should not happen, but for completeness
+                else:
+                    # Fallback to requests
+                    import requests
+                    response = requests.post(
+                        self.endpoint,
+                        json=event_data,
+                        headers=self.headers,
+                        timeout=self.timeout,
+                    )
+                    if response.status_code == 200:
+                        return True
+                    elif response.status_code >= 500 or response.status_code == 429:
+                        last_exception = NetworkError(f"Server error: {response.status_code}")
+                        logger.warning(f"Attempt {attempt + 1} failed: {last_exception}")
+                    elif response.status_code >= 400:
+                        raise TrackingError(f"Client error: {response.status_code} {response.text}")
+                    else:
+                        return False
+
+            except (NetworkError, httpx.RequestError if httpx else requests.exceptions.RequestException) as e:
+                last_exception = e
+                logger.warning(f"Attempt {attempt + 1} failed with network error: {e}")
+
+            # Exponential backoff with jitter
+            if attempt < self.max_retries:
+                backoff_time = (2 ** attempt) + (random.uniform(0, 1))
+                logger.debug(f"Retrying in {backoff_time:.2f} seconds...")
+                time.sleep(backoff_time)
+
+        logger.error(f"All {self.max_retries + 1} tracking attempts failed. Last error: {last_exception}")
+>       raise TrackingError("Tracking failed after multiple retries") from last_exception
+E       cmdrdata_openai.exceptions.TrackingError: Tracking failed after multiple retries
+
+cmdrdata_openai\tracker.py:462: TrackingError
+---------------------------- Captured stderr call -----------------------------
+WARNING:cmdrdata_openai.cmdrdata_openai.security:Using legacy cmdrdata API key format
+WARNING:cmdrdata_openai.cmdrdata_openai.tracker:Attempt 1 failed: Server error: 429
+WARNING:cmdrdata_openai.cmdrdata_openai.tracker:Attempt 2 failed: Server error: 429
+WARNING:cmdrdata_openai.cmdrdata_openai.tracker:Attempt 3 failed: Server error: 429
+WARNING:cmdrdata_openai.cmdrdata_openai.tracker:Attempt 4 failed: Server error: 429
+ERROR:cmdrdata_openai.cmdrdata_openai.tracker:All 4 tracking attempts failed. Last error: Server error: 429
+------------------------------ Captured log call ------------------------------
+WARNING  cmdrdata_openai.cmdrdata_openai.security:security.py:127 Using legacy cmdrdata API key format
+WARNING  cmdrdata_openai.cmdrdata_openai.tracker:tracker.py:426 Attempt 1 failed: Server error: 429
+WARNING  cmdrdata_openai.cmdrdata_openai.tracker:tracker.py:426 Attempt 2 failed: Server error: 429
+WARNING  cmdrdata_openai.cmdrdata_openai.tracker:tracker.py:426 Attempt 3 failed: Server error: 429
+WARNING  cmdrdata_openai.cmdrdata_openai.tracker:tracker.py:426 Attempt 4 failed: Server error: 429
+ERROR    cmdrdata_openai.cmdrdata_openai.tracker:tracker.py:461 All 4 tracking attempts failed. Last error: Server error: 429
+__________ TestUsageTracker.test_track_usage_with_retry_server_error __________
+cmdrdata_openai.exceptions.NetworkError: Server error: 500
+
+The above exception was the direct cause of the following exception:
+
+self = <tests.test_tracker.TestUsageTracker object at 0x000001C4F3558AD0>
+mock_httpx = <MagicMock name='httpx' id='1945410899984'>
+
+    @patch('cmdrdata_openai.tracker.httpx')
+    def test_track_usage_with_retry_server_error(self, mock_httpx):
+        """Test usage tracking with server error response"""
+        tracker = UsageTracker(api_key=self.valid_api_key)
+
+        # Mock httpx client and server error response
+        mock_client = Mock()
+        mock_response = Mock()
+        mock_response.status_code = 500
+        mock_response.text = "Internal Server Error"
+        mock_client.post.return_value = mock_response
+        mock_httpx.Client.return_value.__enter__.return_value = mock_client
+
+        event_data = {"test": "data"}
+
+        with pytest.raises(NetworkError, match="Server error"):
+>           tracker._track_usage_with_retry(event_data)
+
+tests\test_tracker.py:263:
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <cmdrdata_openai.tracker.UsageTracker object at 0x000001C4F3775010>
+event_data = {'test': 'data'}
+
+    def _track_usage_with_retry(self, event_data: Dict[str, Any]) -> bool:
+        """Track usage with exponential backoff retry logic"""
+        last_exception = None
+        for attempt in range(self.max_retries + 1):
+            try:
+                if httpx:
+                    with httpx.Client(timeout=self.timeout) as client:
+                        response = client.post(
+                            self.endpoint, json=event_data, headers=self.headers
+                        )
+
+                        if response.status_code == 200:
+                            return True
+                        # Retry on server errors (5xx) and rate limiting (429)
+                        elif response.status_code >= 500 or response.status_code == 429:
+                            last_exception = NetworkError(f"Server error: {response.status_code}")
+                            logger.warning(f"Attempt {attempt + 1} failed: {last_exception}")
+                        # Do not retry on other client errors (4xx)
+                        elif response.status_code >= 400:
+                            raise TrackingError(f"Client error: {response.status_code} {response.text}")
+                        else:
+                            return False # Should not happen, but for completeness
+                else:
+                    # Fallback to requests
+                    import requests
+                    response = requests.post(
+                        self.endpoint,
+                        json=event_data,
+                        headers=self.headers,
+                        timeout=self.timeout,
+                    )
+                    if response.status_code == 200:
+                        return True
+                    elif response.status_code >= 500 or response.status_code == 429:
+                        last_exception = NetworkError(f"Server error: {response.status_code}")
+                        logger.warning(f"Attempt {attempt + 1} failed: {last_exception}")
+                    elif response.status_code >= 400:
+                        raise TrackingError(f"Client error: {response.status_code} {response.text}")
+                    else:
+                        return False
+
+            except (NetworkError, httpx.RequestError if httpx else requests.exceptions.RequestException) as e:
+                last_exception = e
+                logger.warning(f"Attempt {attempt + 1} failed with network error: {e}")
+
+            # Exponential backoff with jitter
+            if attempt < self.max_retries:
+                backoff_time = (2 ** attempt) + (random.uniform(0, 1))
+                logger.debug(f"Retrying in {backoff_time:.2f} seconds...")
+                time.sleep(backoff_time)
+
+        logger.error(f"All {self.max_retries + 1} tracking attempts failed. Last error: {last_exception}")
+>       raise TrackingError("Tracking failed after multiple retries") from last_exception
+E       cmdrdata_openai.exceptions.TrackingError: Tracking failed after multiple retries
+
+cmdrdata_openai\tracker.py:462: TrackingError
+---------------------------- Captured stderr call -----------------------------
+WARNING:cmdrdata_openai.cmdrdata_openai.security:Using legacy cmdrdata API key format
+WARNING:cmdrdata_openai.cmdrdata_openai.tracker:Attempt 1 failed: Server error: 500
+WARNING:cmdrdata_openai.cmdrdata_openai.tracker:Attempt 2 failed: Server error: 500
+WARNING:cmdrdata_openai.cmdrdata_openai.tracker:Attempt 3 failed: Server error: 500
+WARNING:cmdrdata_openai.cmdrdata_openai.tracker:Attempt 4 failed: Server error: 500
+ERROR:cmdrdata_openai.cmdrdata_openai.tracker:All 4 tracking attempts failed. Last error: Server error: 500
+------------------------------ Captured log call ------------------------------
+WARNING  cmdrdata_openai.cmdrdata_openai.security:security.py:127 Using legacy cmdrdata API key format
+WARNING  cmdrdata_openai.cmdrdata_openai.tracker:tracker.py:426 Attempt 1 failed: Server error: 500
+WARNING  cmdrdata_openai.cmdrdata_openai.tracker:tracker.py:426 Attempt 2 failed: Server error: 500
+WARNING  cmdrdata_openai.cmdrdata_openai.tracker:tracker.py:426 Attempt 3 failed: Server error: 500
+WARNING  cmdrdata_openai.cmdrdata_openai.tracker:tracker.py:426 Attempt 4 failed: Server error: 500
+ERROR    cmdrdata_openai.cmdrdata_openai.tracker:tracker.py:461 All 4 tracking attempts failed. Last error: Server error: 500
+__________ TestUsageTracker.test_track_usage_with_retry_client_error __________
+
+self = <cmdrdata_openai.tracker.UsageTracker object at 0x000001C4F3909F40>
+event_data = {'test': 'data'}
+
+    def _track_usage_with_retry(self, event_data: Dict[str, Any]) -> bool:
+        """Track usage with exponential backoff retry logic"""
+        last_exception = None
+        for attempt in range(self.max_retries + 1):
+            try:
+                if httpx:
+                    with httpx.Client(timeout=self.timeout) as client:
+                        response = client.post(
+                            self.endpoint, json=event_data, headers=self.headers
+                        )
+
+                        if response.status_code == 200:
+                            return True
+                        # Retry on server errors (5xx) and rate limiting (429)
+                        elif response.status_code >= 500 or response.status_code == 429:
+                            last_exception = NetworkError(f"Server error: {response.status_code}")
+                            logger.warning(f"Attempt {attempt + 1} failed: {last_exception}")
+                        # Do not retry on other client errors (4xx)
+                        elif response.status_code >= 400:
+>                           raise TrackingError(f"Client error: {response.status_code} {response.text}")
+E                           cmdrdata_openai.exceptions.TrackingError: Client error: 400 Bad Request
+
+cmdrdata_openai\tracker.py:429: TrackingError
+
+During handling of the above exception, another exception occurred:
+
+self = <tests.test_tracker.TestUsageTracker object at 0x000001C4F35709F0>
+mock_httpx = <MagicMock name='httpx' id='1945410898304'>
+
+    @patch('cmdrdata_openai.tracker.httpx')
+    def test_track_usage_with_retry_client_error(self, mock_httpx):
+        """Test usage tracking with client error response"""
+        tracker = UsageTracker(api_key=self.valid_api_key)
+
+        # Mock httpx client and client error response
+        mock_client = Mock()
+        mock_response = Mock()
+        mock_response.status_code = 400
+        mock_response.text = "Bad Request"
+        mock_client.post.return_value = mock_response
+        mock_httpx.Client.return_value.__enter__.return_value = mock_client
+
+        event_data = {"test": "data"}
+
+        with pytest.raises(TrackingError, match="Client error"):
+>           tracker._track_usage_with_retry(event_data)
+
+tests\test_tracker.py:281:
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <cmdrdata_openai.tracker.UsageTracker object at 0x000001C4F3909F40>
+event_data = {'test': 'data'}
+
+    def _track_usage_with_retry(self, event_data: Dict[str, Any]) -> bool:
+        """Track usage with exponential backoff retry logic"""
+        last_exception = None
+        for attempt in range(self.max_retries + 1):
+            try:
+                if httpx:
+                    with httpx.Client(timeout=self.timeout) as client:
+                        response = client.post(
+                            self.endpoint, json=event_data, headers=self.headers
+                        )
+
+                        if response.status_code == 200:
+                            return True
+                        # Retry on server errors (5xx) and rate limiting (429)
+                        elif response.status_code >= 500 or response.status_code == 429:
+                            last_exception = NetworkError(f"Server error: {response.status_code}")
+                            logger.warning(f"Attempt {attempt + 1} failed: {last_exception}")
+                        # Do not retry on other client errors (4xx)
+                        elif response.status_code >= 400:
+                            raise TrackingError(f"Client error: {response.status_code} {response.text}")
+                        else:
+                            return False # Should not happen, but for completeness
+                else:
+                    # Fallback to requests
+                    import requests
+                    response = requests.post(
+                        self.endpoint,
+                        json=event_data,
+                        headers=self.headers,
+                        timeout=self.timeout,
+                    )
+                    if response.status_code == 200:
+                        return True
+                    elif response.status_code >= 500 or response.status_code == 429:
+                        last_exception = NetworkError(f"Server error: {response.status_code}")
+                        logger.warning(f"Attempt {attempt + 1} failed: {last_exception}")
+                    elif response.status_code >= 400:
+                        raise TrackingError(f"Client error: {response.status_code} {response.text}")
+                    else:
+                        return False
+
+>           except (NetworkError, httpx.RequestError if httpx else requests.exceptions.RequestException) as e:
+E           TypeError: catching classes that do not inherit from BaseException is not allowed
+
+cmdrdata_openai\tracker.py:451: TypeError
+---------------------------- Captured stderr call -----------------------------
+WARNING:cmdrdata_openai.cmdrdata_openai.security:Using legacy cmdrdata API key format
+------------------------------ Captured log call ------------------------------
+WARNING  cmdrdata_openai.cmdrdata_openai.security:security.py:127 Using legacy cmdrdata API key format
+_________ TestUsageTracker.test_track_usage_no_retry_on_client_error __________
+
+self = <cmdrdata_openai.tracker.UsageTracker object at 0x000001C4F3800FF0>
+event_data = {'test': 'data'}
+
+    def _track_usage_with_retry(self, event_data: Dict[str, Any]) -> bool:
+        """Track usage with exponential backoff retry logic"""
+        last_exception = None
+        for attempt in range(self.max_retries + 1):
+            try:
+                if httpx:
+                    with httpx.Client(timeout=self.timeout) as client:
+                        response = client.post(
+                            self.endpoint, json=event_data, headers=self.headers
+                        )
+
+                        if response.status_code == 200:
+                            return True
+                        # Retry on server errors (5xx) and rate limiting (429)
+                        elif response.status_code >= 500 or response.status_code == 429:
+                            last_exception = NetworkError(f"Server error: {response.status_code}")
+                            logger.warning(f"Attempt {attempt + 1} failed: {last_exception}")
+                        # Do not retry on other client errors (4xx)
+                        elif response.status_code >= 400:
+>                           raise TrackingError(f"Client error: {response.status_code} {response.text}")
+E                           cmdrdata_openai.exceptions.TrackingError: Client error: 400 Bad Request
+
+cmdrdata_openai\tracker.py:429: TrackingError
+
+During handling of the above exception, another exception occurred:
+
+self = <tests.test_tracker.TestUsageTracker object at 0x000001C4F358E0D0>
+mock_httpx = <MagicMock name='httpx' id='1945411301600'>
+
+    @patch('cmdrdata_openai.tracker.httpx')
+    def test_track_usage_no_retry_on_client_error(self, mock_httpx):
+        """Test that the tracker does not retry on a 400 client error."""
+        tracker = UsageTracker(api_key=self.valid_api_key, max_retries=2)
+
+        mock_client = Mock()
+        mock_response_fail = Mock(status_code=400, text="Bad Request")
+        mock_client.post.return_value = mock_response_fail
+        mock_httpx.Client.return_value.__enter__.return_value = mock_client
+
+        event_data = {"test": "data"}
+
+        with patch('time.sleep') as mock_sleep:
+            with pytest.raises(TrackingError, match="Client error: 400 Bad Request"):
+>               tracker._track_usage_with_retry(event_data)
+
+tests\test_tracker.py:337:
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <cmdrdata_openai.tracker.UsageTracker object at 0x000001C4F3800FF0>
+event_data = {'test': 'data'}
+
+    def _track_usage_with_retry(self, event_data: Dict[str, Any]) -> bool:
+        """Track usage with exponential backoff retry logic"""
+        last_exception = None
+        for attempt in range(self.max_retries + 1):
+            try:
+                if httpx:
+                    with httpx.Client(timeout=self.timeout) as client:
+                        response = client.post(
+                            self.endpoint, json=event_data, headers=self.headers
+                        )
+
+                        if response.status_code == 200:
+                            return True
+                        # Retry on server errors (5xx) and rate limiting (429)
+                        elif response.status_code >= 500 or response.status_code == 429:
+                            last_exception = NetworkError(f"Server error: {response.status_code}")
+                            logger.warning(f"Attempt {attempt + 1} failed: {last_exception}")
+                        # Do not retry on other client errors (4xx)
+                        elif response.status_code >= 400:
+                            raise TrackingError(f"Client error: {response.status_code} {response.text}")
+                        else:
+                            return False # Should not happen, but for completeness
+                else:
+                    # Fallback to requests
+                    import requests
+                    response = requests.post(
+                        self.endpoint,
+                        json=event_data,
+                        headers=self.headers,
+                        timeout=self.timeout,
+                    )
+                    if response.status_code == 200:
+                        return True
+                    elif response.status_code >= 500 or response.status_code == 429:
+                        last_exception = NetworkError(f"Server error: {response.status_code}")
+                        logger.warning(f"Attempt {attempt + 1} failed: {last_exception}")
+                    elif response.status_code >= 400:
+                        raise TrackingError(f"Client error: {response.status_code} {response.text}")
+                    else:
+                        return False
+
+>           except (NetworkError, httpx.RequestError if httpx else requests.exceptions.RequestException) as e:
+E           TypeError: catching classes that do not inherit from BaseException is not allowed
+
+cmdrdata_openai\tracker.py:451: TypeError
+---------------------------- Captured stderr call -----------------------------
+WARNING:cmdrdata_openai.cmdrdata_openai.security:Using legacy cmdrdata API key format
+------------------------------ Captured log call ------------------------------
+WARNING  cmdrdata_openai.cmdrdata_openai.security:security.py:127 Using legacy cmdrdata API key format
+_________ TestUsageTrackerIntegration.test_full_tracking_flow_success _________
+
+self = <tests.test_tracker.TestUsageTrackerIntegration object at 0x000001C4F352BC50>
+mock_httpx = <MagicMock name='httpx' id='1945411294544'>
+
+    @patch('cmdrdata_openai.tracker.httpx')
+    def test_full_tracking_flow_success(self, mock_httpx):
+        """Test complete tracking flow from input to HTTP request"""
+        # Mock httpx
+        mock_client = Mock()
+        mock_response = Mock()
+        mock_response.status_code = 200
+        mock_client.post.return_value = mock_response
+        mock_httpx.Client.return_value.__enter__.return_value = mock_client
+
+        tracker = UsageTracker(api_key=self.valid_api_key)
+
+        result = tracker.track_usage(
+            customer_id=self.customer_id,
+            model=self.model,
+            input_tokens=self.input_tokens,
+            output_tokens=self.output_tokens,
+            provider="openai",
+            metadata={"test_key": "test_value"},
+            timestamp=datetime(2023, 1, 1, 12, 0, 0)
+        )
+
+        assert result is True
+
+        # Verify the HTTP request was made with correct data
+        mock_client.post.assert_called_once()
+        call_args = mock_client.post.call_args
+
+        assert call_args[1]["json"]["customer_id"] == self.customer_id
+        assert call_args[1]["json"]["model"] == self.model
+        assert call_args[1]["json"]["input_tokens"] == self.input_tokens
+        assert call_args[1]["json"]["output_tokens"] == self.output_tokens
+        assert call_args[1]["json"]["total_tokens"] == 25
+        assert call_args[1]["json"]["provider"] == "openai"
+        assert call_args[1]["json"]["metadata"]["test_key"] == "test_value"
+>       assert call_args[1]["json"]["timestamp"] == "2023-01-01T12:00:00"
+E       AssertionError: assert 1672603200 == '2023-01-01T12:00:00'
+
+tests\test_tracker.py:527: AssertionError
+---------------------------- Captured stderr call -----------------------------
+WARNING:cmdrdata_openai.cmdrdata_openai.security:Using legacy cmdrdata API key format
+------------------------------ Captured log call ------------------------------
+WARNING  cmdrdata_openai.cmdrdata_openai.security:security.py:127 Using legacy cmdrdata API key format
+__________________ test_compatibility_with_fallback_version ___________________
+
+    def test_compatibility_with_fallback_version():
+        """Test compatibility checking with fallback version parser"""
+        # This tests the fallback when packaging module is not available
+        # Mock the packaging import to raise ImportError
+        with patch('builtins.__import__') as mock_import:
+            def side_effect(name, *args, **kwargs):
+                if name == 'packaging':
+                    raise ImportError("No module named 'packaging'")
+                # For openai, return a mock with a version
+                elif name == 'openai':
+                    mock_openai = Mock()
+                    mock_openai.__version__ = "1.5.0"
+                    return mock_openai
+                return __import__(name, *args, **kwargs)
+
+            mock_import.side_effect = side_effect
+
+            # Should still work with basic version comparison
+>           compat = VersionCompatibility()
+                     ^^^^^^^^^^^^^^^^^^^^^^
+
+tests\test_version_compat.py:101:
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+cmdrdata_openai\version_compat.py:57: in __init__
+    self._check_openai_version()
+cmdrdata_openai\version_compat.py:65: in _check_openai_version
+    self._validate_openai_version()
+cmdrdata_openai\version_compat.py:100: in _validate_openai_version
+    warnings.warn(
+..\..\appdata\local\programs\python\python313\Lib\unittest\mock.py:1167: in __call__
+    return self._mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+..\..\appdata\local\programs\python\python313\Lib\unittest\mock.py:1171: in _mock_call
+    return self._execute_mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+..\..\appdata\local\programs\python\python313\Lib\unittest\mock.py:1232: in _execute_mock_call
+    result = effect(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^
+tests\test_version_compat.py:96: in side_effect
+    return __import__(name, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+..\..\appdata\local\programs\python\python313\Lib\unittest\mock.py:1167: in __call__
+    return self._mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   RecursionError: maximum recursion depth exceeded
+!!! Recursion detected (same locals & position)
+============================== warnings summary ===============================
+tests/test_async_client.py::TestAsyncTrackedChatCompletions::test_create_with_tracking_success
+  C:\Users\User\product\cmdrdata-openai\cmdrdata_openai\async_client.py:75: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+    timestamp=datetime.utcnow(),
+
+tests/test_async_client.py::TestAsyncTrackedCompletions::test_create_with_tracking_success
+  C:\Users\User\product\cmdrdata-openai\cmdrdata_openai\async_client.py:137: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+    timestamp=datetime.utcnow(),
+
+tests/test_basic_functionality.py: 1 warning
+tests/test_performance.py: 65 warnings
+  C:\Users\User\product\cmdrdata-openai\cmdrdata_openai\performance.py:88: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+    value=value, created_at=datetime.utcnow(), ttl=ttl or self.default_ttl
+
+tests/test_basic_functionality.py: 1 warning
+tests/test_performance.py: 70 warnings
+  <string>:6: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+
+tests/test_basic_functionality.py: 1 warning
+tests/test_performance.py: 68 warnings
+  C:\Users\User\product\cmdrdata-openai\cmdrdata_openai\performance.py:41: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+    self.last_accessed = datetime.utcnow()
+
+tests/test_logging_config.py::TestStructuredFormatter::test_basic_log_formatting
+tests/test_logging_config.py::TestStructuredFormatter::test_log_formatting_with_custom_fields
+tests/test_logging_config.py::TestStructuredFormatter::test_log_formatting_with_extra_fields
+tests/test_logging_config.py::TestStructuredFormatter::test_log_formatting_with_exception
+tests/test_logging_config.py::TestLoggingConfig::test_file_logging
+tests/test_logging_config.py::TestLoggingConfig::test_invalid_log_file_path
+  C:\Users\User\product\cmdrdata-openai\cmdrdata_openai\logging_config.py:23: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+    "timestamp": datetime.utcnow().isoformat() + "Z",
+
+tests/test_performance.py::TestCacheEntry::test_cache_entry_creation
+  C:\Users\User\product\cmdrdata-openai\tests\test_performance.py:27: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+    created_at=datetime.utcnow(),
+
+tests/test_performance.py::TestCacheEntry::test_cache_entry_is_expired
+  C:\Users\User\product\cmdrdata-openai\tests\test_performance.py:40: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+    created_at=datetime.utcnow()
+
+tests/test_performance.py::TestCacheEntry::test_cache_entry_is_expired
+  C:\Users\User\product\cmdrdata-openai\tests\test_performance.py:47: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+    created_at=datetime.utcnow() - timedelta(minutes=10),
+
+tests/test_performance.py: 10 warnings
+  C:\Users\User\product\cmdrdata-openai\cmdrdata_openai\performance.py:36: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+    return datetime.utcnow() - self.created_at > self.ttl
+
+tests/test_performance.py::TestCacheEntry::test_cache_entry_is_expired
+  C:\Users\User\product\cmdrdata-openai\tests\test_performance.py:55: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+    created_at=datetime.utcnow() - timedelta(minutes=2),
+
+tests/test_performance.py::TestCacheEntry::test_cache_entry_touch
+  C:\Users\User\product\cmdrdata-openai\tests\test_performance.py:64: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+    created_at=datetime.utcnow()
+
+tests/test_tracker.py::TestUsageTracker::test_sanitize_tracking_data
+  C:\Users\User\product\cmdrdata-openai\tests\test_tracker.py:140: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+    timestamp = datetime.utcnow()
+
+tests/test_tracker.py::TestUsageTracker::test_track_usage_with_retry_success_httpx
+  C:\Users\User\product\cmdrdata-openai\tests\test_tracker.py:182: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+    "timestamp": datetime.utcnow().isoformat(),
+
+tests/test_tracker.py::TestUsageTracker::test_track_usage_with_retry_success_requests
+  C:\Users\User\product\cmdrdata-openai\tests\test_tracker.py:216: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+    "timestamp": datetime.utcnow().isoformat(),
+
+tests/test_tracker.py::TestUsageTracker::test_track_usage_async_success
+tests/test_tracker.py::TestUsageTracker::test_track_usage_async_fallback
+  C:\Users\User\product\cmdrdata-openai\cmdrdata_openai\tracker.py:211: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+    "timestamp": int((timestamp or datetime.utcnow()).timestamp()),
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ===========================
+FAILED tests/test_client.py::TestTrackedOpenAI::test_compatibility_check_warning
+FAILED tests/test_proxy.py::TestTrackedProxy::test_wrap_method_exception_handling
+FAILED tests/test_tracker.py::TestUsageTracker::test_initialization_default_values
+FAILED tests/test_tracker.py::TestUsageTracker::test_sanitize_tracking_data
+FAILED tests/test_tracker.py::TestUsageTracker::test_track_usage_with_retry_rate_limited
+FAILED tests/test_tracker.py::TestUsageTracker::test_track_usage_with_retry_server_error
+FAILED tests/test_tracker.py::TestUsageTracker::test_track_usage_with_retry_client_error
+FAILED tests/test_tracker.py::TestUsageTracker::test_track_usage_no_retry_on_client_error
+FAILED tests/test_tracker.py::TestUsageTrackerIntegration::test_full_tracking_flow_success
+FAILED tests/test_version_compat.py::test_compatibility_with_fallback_version
+================ 10 failed, 286 passed, 234 warnings in 22.50s ================

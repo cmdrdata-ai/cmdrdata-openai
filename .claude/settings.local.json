@@ -1,0 +1,29 @@
+{
+  "permissions": {
+    "allow": [
+      "WebFetch(domain:github.com)",
+      "Bash(find:*)",
+      "Bash(python -m pytest tests/ -v --tb=short)",
+      "Bash(python -m pip install:*)",
+      "Bash(python -m pytest tests/test_exceptions.py -v)",
+      "Bash(python -m pytest tests/test_validation.py -v)",
+      "Bash(python -m pytest tests/test_basic_functionality.py -v)",
+      "Bash(python -m pytest tests/test_retry.py::TestRetryConfig -v)",
+      "Bash(python -m pytest tests/test_retry.py::TestRetryConfig::test_should_retry_with_retryable_exceptions -v)",
+      "Bash(python -m pytest tests/test_performance.py::TestLRUCache::test_lru_cache_basic_operations -v)",
+      "Bash(python -m pytest tests/test_basic_functionality.py tests/test_exceptions.py tests/test_context.py tests/test_version_compat.py --tb=line -q)",
+      "Bash(python:*)",
+      "Bash(timeout 30 python -m pytest:*)",
+      "Bash(uv run:*)",
+      "Bash(grep:*)",
+      "WebFetch(domain:docs.anthropic.com)",
+      "Bash(mkdir:*)",
+      "Bash(ls:*)",
+      "Bash(cp:*)",
+      "Bash(PYTHONPATH=\"../cmdrdata-anthropic\" uv run --active python -m pytest ../cmdrdata-anthropic/tests/ --tb=short)",
+      "WebFetch(domain:ai.google.dev)",
+      "WebFetch(domain:googleapis.github.io)"
+    ],
+    "deny": []
+  }
+}

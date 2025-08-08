@@ -2,24 +2,25 @@
 Unit tests for logging configuration
 """
 
-import pytest
-import logging
 import json
+import logging
 import os
 import tempfile
 from datetime import datetime
-from unittest.mock import Mock, patch
 from pathlib import Path
+from unittest.mock import Mock, patch
+
+import pytest
 
 from cmdrdata_openai.logging_config import (
-    StructuredFormatter,
-    SecurityFormatter,
+    DEFAULT_LOGGING_CONFIG,
     LoggingConfig,
     RequestLogger,
-    log_performance,
-    get_logger,
+    SecurityFormatter,
+    StructuredFormatter,
     configure_logging,
-    DEFAULT_LOGGING_CONFIG,
+    get_logger,
+    log_performance,
 )
 
 
@@ -75,7 +76,7 @@ class TestStructuredFormatter:
 
         # Add custom fields
         record.customer_id = "customer-123"
-        record.model = "gpt-4"
+        record.model = "gpt-5"
         record.tokens = 150
         record.request_id = "req-abc123"
         record.response_time = 0.85
@@ -85,7 +86,7 @@ class TestStructuredFormatter:
         parsed = json.loads(result)
 
         assert parsed["customer_id"] == "customer-123"
-        assert parsed["model"] == "gpt-4"
+        assert parsed["model"] == "gpt-5"
         assert parsed["tokens"] == 150
         assert parsed["request_id"] == "req-abc123"
         assert parsed["response_time"] == 0.85

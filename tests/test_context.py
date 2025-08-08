@@ -3,12 +3,13 @@ Tests for customer context management
 """
 
 import pytest
+
 from cmdrdata_openai.context import (
-    set_customer_context,
-    get_customer_context,
     clear_customer_context,
     customer_context,
+    get_customer_context,
     get_effective_customer_id,
+    set_customer_context,
 )
 
 

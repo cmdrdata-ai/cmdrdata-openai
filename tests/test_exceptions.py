@@ -5,18 +5,18 @@ Unit tests for custom exceptions
 import pytest
 
 from cmdrdata_openai.exceptions import (
-    CmdrDataError,
-    ConfigurationError,
     AuthenticationError,
-    ValidationError,
-    RateLimitError,
-    TrackingError,
-    NetworkError,
-    TimeoutError,
-    RetryExhaustedError,
     CircuitBreakerError,
-    SecurityError,
+    CmdrDataError,
     CompatibilityError,
+    ConfigurationError,
+    NetworkError,
+    RateLimitError,
+    RetryExhaustedError,
+    SecurityError,
+    TimeoutError,
+    TrackingError,
+    ValidationError,
 )
 
 

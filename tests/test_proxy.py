@@ -2,21 +2,22 @@
 Unit tests for TrackedProxy and method tracking
 """
 
-import pytest
-from unittest.mock import Mock, patch
 import inspect
+from unittest.mock import Mock, patch
+
+import pytest
 
 from cmdrdata_openai.proxy import (
+    OPENAI_TRACK_METHODS,
     TrackedProxy,
+    track_assistant_run,
+    track_audio,
     track_chat_completion,
     track_completion,
     track_embeddings,
-    track_images,
-    track_audio,
-    track_moderations,
     track_fine_tuning,
-    track_assistant_run,
-    OPENAI_TRACK_METHODS,
+    track_images,
+    track_moderations,
 )
 from cmdrdata_openai.tracker import UsageTracker
 
@@ -336,7 +337,7 @@ class TestTrackingFunctions:
         """Set up test fixtures"""
         self.mock_tracker = Mock()
         self.mock_result = Mock()
-        self.mock_result.model = "gpt-4"
+        self.mock_result.model = "gpt-5"
         self.mock_result.usage = Mock()
         self.mock_result.usage.prompt_tokens = 10
         self.mock_result.usage.completion_tokens = 15
@@ -358,7 +359,7 @@ class TestTrackingFunctions:
                 tracker=self.mock_tracker,
                 method_name="chat.completions.create",
                 args=(),
-                kwargs={"model": "gpt-4"},
+                kwargs={"model": "gpt-5"},
             )
 
             # Verify tracker was called
@@ -486,7 +487,7 @@ class TestTrackingFunctions:
         mock_embedding_result.data[0].embedding = [0.1, 0.2, 0.3]
         mock_embedding_result.id = "emb_123"
         mock_embedding_result.created = 1234567890
-        
+
         with patch(
             "cmdrdata_openai.proxy.get_effective_customer_id"
         ) as mock_get_customer:
@@ -522,7 +523,7 @@ class TestTrackingFunctions:
         mock_image_result.data[0].url = "https://example.com/image1.png"
         mock_image_result.data[1].url = "https://example.com/image2.png"
         mock_image_result.created = 1234567890
-        
+
         with patch(
             "cmdrdata_openai.proxy.get_effective_customer_id"
         ) as mock_get_customer:
@@ -534,7 +535,12 @@ class TestTrackingFunctions:
                 tracker=self.mock_tracker,
                 method_name="images.generate",
                 args=(),
-                kwargs={"prompt": "a cat", "n": 2, "size": "1024x1024", "model": "dall-e-3"},
+                kwargs={
+                    "prompt": "a cat",
+                    "n": 2,
+                    "size": "1024x1024",
+                    "model": "dall-e-3",
+                },
             )
 
             # Verify tracker was called
@@ -556,7 +562,7 @@ class TestTrackingFunctions:
         # Set up audio transcription response
         mock_audio_result = Mock()
         mock_audio_result.text = "Hello, this is a transcription"
-        
+
         with patch(
             "cmdrdata_openai.proxy.get_effective_customer_id"
         ) as mock_get_customer:
@@ -594,7 +600,7 @@ class TestTrackingFunctions:
         mock_moderation_result.results[0].category_scores = Mock()
         mock_moderation_result.model = "text-moderation-latest"
         mock_moderation_result.id = "modr-123"
-        
+
         with patch(
             "cmdrdata_openai.proxy.get_effective_customer_id"
         ) as mock_get_customer:
@@ -630,7 +636,7 @@ class TestTrackingFunctions:
         mock_ft_result.training_file = "file-123"
         mock_ft_result.status = "queued"
         mock_ft_result.created_at = 1234567890
-        
+
         with patch(
             "cmdrdata_openai.proxy.get_effective_customer_id"
         ) as mock_get_customer:
@@ -650,14 +656,14 @@ class TestTrackingFunctions:
             call_kwargs = self.mock_tracker.track_usage_background.call_args[1]
 
             assert call_kwargs["customer_id"] == "test-customer"
-            assert call_kwargs["model"] == "gpt-3.5-turbo"
+            assert call_kwargs["model"] == "gpt-5"
             assert call_kwargs["input_tokens"] == 0
             assert call_kwargs["output_tokens"] == 0
             assert call_kwargs["provider"] == "openai"
             assert call_kwargs["metadata"]["job_id"] == "ftjob-123"
             assert call_kwargs["metadata"]["training_file"] == "file-123"
             assert call_kwargs["metadata"]["status"] == "queued"
-            assert call_kwargs["metadata"]["model"] == "gpt-3.5-turbo"
+            assert call_kwargs["metadata"]["model"] == "gpt-5"
 
     def test_track_assistant_run_success(self):
         """Test successful assistant run tracking"""
@@ -672,7 +678,7 @@ class TestTrackingFunctions:
         mock_run_result.usage.prompt_tokens = 50
         mock_run_result.usage.completion_tokens = 100
         mock_run_result.created_at = 1234567890
-        
+
         with patch(
             "cmdrdata_openai.proxy.get_effective_customer_id"
         ) as mock_get_customer:
@@ -722,63 +728,71 @@ class TestOpenAITrackMethods:
             "beta.threads.runs.create": track_assistant_run,
             "beta.threads.runs.create_and_poll": track_assistant_run,
         }
-        
+
         for method_name, expected_function in expected_methods.items():
             assert method_name in OPENAI_TRACK_METHODS, f"Missing method: {method_name}"
-            assert callable(OPENAI_TRACK_METHODS[method_name]), f"Method {method_name} not callable"
-            assert OPENAI_TRACK_METHODS[method_name] == expected_function, f"Wrong function for {method_name}"
-            
+            assert callable(
+                OPENAI_TRACK_METHODS[method_name]
+            ), f"Method {method_name} not callable"
+            assert (
+                OPENAI_TRACK_METHODS[method_name] == expected_function
+            ), f"Wrong function for {method_name}"
+
         # Verify we have the expected total count
-        assert len(OPENAI_TRACK_METHODS) == 13, f"Expected 13 methods, got {len(OPENAI_TRACK_METHODS)}"
+        assert (
+            len(OPENAI_TRACK_METHODS) == 13
+        ), f"Expected 13 methods, got {len(OPENAI_TRACK_METHODS)}"
 
     def test_proxy_integration_all_methods(self):
         """Test that all tracking methods work through proxy integration"""
         mock_client = Mock()
         mock_tracker = Mock()
-        
+
         # Set up nested mock structure for OpenAI client
         mock_client.chat = Mock()
         mock_client.chat.completions = Mock()
         mock_client.chat.completions.create = Mock(return_value="chat_result")
-        
+
         mock_client.completions = Mock()
         mock_client.completions.create = Mock(return_value="completion_result")
-        
+
         mock_client.embeddings = Mock()
         mock_client.embeddings.create = Mock(return_value="embedding_result")
-        
+
         mock_client.images = Mock()
         mock_client.images.generate = Mock(return_value="image_result")
         mock_client.images.edit = Mock(return_value="image_edit_result")
         mock_client.images.create_variation = Mock(return_value="image_var_result")
-        
+
         mock_client.audio = Mock()
         mock_client.audio.transcriptions = Mock()
-        mock_client.audio.transcriptions.create = Mock(return_value="transcription_result")
+        mock_client.audio.transcriptions.create = Mock(
+            return_value="transcription_result"
+        )
         mock_client.audio.translations = Mock()
         mock_client.audio.translations.create = Mock(return_value="translation_result")
         mock_client.audio.speech = Mock()
         mock_client.audio.speech.create = Mock(return_value="speech_result")
-        
+
         mock_client.moderations = Mock()
         mock_client.moderations.create = Mock(return_value="moderation_result")
-        
+
         mock_client.fine_tuning = Mock()
         mock_client.fine_tuning.jobs = Mock()
         mock_client.fine_tuning.jobs.create = Mock(return_value="ft_result")
-        
+
         mock_client.beta = Mock()
         mock_client.beta.threads = Mock()
         mock_client.beta.threads.runs = Mock()
         mock_client.beta.threads.runs.create = Mock(return_value="run_result")
-        mock_client.beta.threads.runs.create_and_poll = Mock(return_value="run_poll_result")
-        
-        proxy = TrackedProxy(
-            client=mock_client,
-            tracker=mock_tracker,
-            track_methods=OPENAI_TRACK_METHODS
+        mock_client.beta.threads.runs.create_and_poll = Mock(
+            return_value="run_poll_result"
         )
-        
+
+        proxy = TrackedProxy(
+            client=mock_client, tracker=mock_tracker, track_methods=OPENAI_TRACK_METHODS
+        )
+
         # Test each method through proxy
         test_cases = [
             (lambda: proxy.chat.completions.create(), "chat_result"),
@@ -795,7 +809,7 @@ class TestOpenAITrackMethods:
             (lambda: proxy.beta.threads.runs.create(), "run_result"),
             (lambda: proxy.beta.threads.runs.create_and_poll(), "run_poll_result"),
         ]
-        
+
         for test_func, expected_result in test_cases:
             result = test_func()
             assert result == expected_result

@@ -2,12 +2,14 @@
 Tests for version compatibility checking
 """
 
+from unittest.mock import MagicMock, Mock, patch
+
 import pytest
-from unittest.mock import patch, MagicMock, Mock
+
 from cmdrdata_openai.version_compat import (
+    VersionCompatibility,
     check_compatibility,
     get_compatibility_info,
-    VersionCompatibility,
 )
 
 

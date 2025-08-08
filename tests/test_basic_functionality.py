@@ -2,13 +2,14 @@
 Basic functionality tests to verify the system works
 """
 
-import pytest
 from unittest.mock import Mock, patch
 
-from cmdrdata_openai.security import APIKeyManager, InputSanitizer
-from cmdrdata_openai.exceptions import ValidationError, SecurityError
-from cmdrdata_openai.retry import RetryConfig, CircuitBreaker
+import pytest
+
+from cmdrdata_openai.exceptions import SecurityError, ValidationError
 from cmdrdata_openai.performance import LRUCache
+from cmdrdata_openai.retry import CircuitBreaker, RetryConfig
+from cmdrdata_openai.security import APIKeyManager, InputSanitizer
 
 
 class TestBasicFunctionality:

@@ -2,11 +2,12 @@
 Unit tests for input validation
 """
 
-import pytest
 from unittest.mock import patch
 
+import pytest
+
+from cmdrdata_openai.exceptions import SecurityError, ValidationError
 from cmdrdata_openai.security import APIKeyManager, InputSanitizer, validate_input
-from cmdrdata_openai.exceptions import ValidationError, SecurityError
 
 
 class TestAPIKeyManager:
@@ -188,7 +189,14 @@ class TestAPIKeyManager:
 
     def test_validate_model_name_success(self):
         """Test successful model name validation"""
-        valid_models = ["gpt-4", "gpt-3.5-turbo", "text-davinci-003", "custom_model_v1"]
+        valid_models = [
+            "gpt-5",
+            "gpt-4o",
+            "gpt-4",
+            "gpt-3.5-turbo",
+            "text-davinci-003",
+            "custom_model_v1",
+        ]
 
         for model in valid_models:
             assert InputSanitizer.validate_model_name(model) is True

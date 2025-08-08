@@ -2,28 +2,29 @@
 Performance tests for cmdrdata-openai
 """
 
-import pytest
 import asyncio
-import time
 import threading
-from unittest.mock import Mock, patch
+import time
 from datetime import datetime, timedelta
 from functools import wraps
+from unittest.mock import Mock, patch
+
+import pytest
 
 from cmdrdata_openai.performance import (
-    LRUCache,
     CacheEntry,
     ConnectionPool,
-    RequestBatcher,
-    RateLimiter,
-    PerformanceMonitor,
-    cached,
-    timed,
+    LRUCache,
     PerformanceContext,
-    get_cache_stats,
-    get_performance_stats,
+    PerformanceMonitor,
+    RateLimiter,
+    RequestBatcher,
+    cached,
     clear_cache,
     configure_performance,
+    get_cache_stats,
+    get_performance_stats,
+    timed,
 )
 
 

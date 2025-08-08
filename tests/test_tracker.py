@@ -2,15 +2,16 @@
 Unit tests for UsageTracker
 """
 
-import pytest
 import asyncio
 import time
-from unittest.mock import Mock, patch, AsyncMock
-from datetime import datetime
 from concurrent.futures import ThreadPoolExecutor
+from datetime import datetime
+from unittest.mock import AsyncMock, Mock, patch
 
+import pytest
+
+from cmdrdata_openai.exceptions import NetworkError, TrackingError, ValidationError
 from cmdrdata_openai.tracker import UsageTracker
-from cmdrdata_openai.exceptions import ValidationError, NetworkError, TrackingError
 
 
 class TestUsageTracker:
@@ -21,7 +22,7 @@ class TestUsageTracker:
         self.valid_api_key = "tk-" + "a" * 32
         self.valid_endpoint = "https://api.example.com/events"
         self.customer_id = "test-customer-123"
-        self.model = "gpt-4"
+        self.model = "gpt-5"
         self.input_tokens = 10
         self.output_tokens = 15
 
@@ -486,8 +487,6 @@ class TestUsageTracker:
         with patch.object(tracker._executor, "shutdown") as mock_shutdown:
             del tracker
             mock_shutdown.assert_called_once_with(wait=False)
-
-
 
 
 if __name__ == "__main__":

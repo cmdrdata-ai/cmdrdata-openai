@@ -2,10 +2,11 @@
 Unit tests for AsyncTrackedOpenAI client
 """
 
-import pytest
 import asyncio
-from unittest.mock import Mock, patch, AsyncMock
 from datetime import datetime
+from unittest.mock import AsyncMock, Mock, patch
+
+import pytest
 
 from cmdrdata_openai import AsyncTrackedOpenAI
 from cmdrdata_openai.exceptions import ValidationError
@@ -134,7 +135,7 @@ class TestAsyncTrackedChatCompletions:
 
         # Mock the response
         mock_response = Mock()
-        mock_response.model = "gpt-4"
+        mock_response.model = "gpt-5"
         mock_response.usage = Mock()
         mock_response.usage.prompt_tokens = 10
         mock_response.usage.completion_tokens = 15
@@ -156,14 +157,14 @@ class TestAsyncTrackedChatCompletions:
 
         # Test the call
         result = await completions.create(
-            model="gpt-4",
+            model="gpt-5",
             messages=[{"role": "user", "content": "Hello"}],
             customer_id="test-customer",
         )
 
         # Verify OpenAI was called
         self.mock_openai_completions.create.assert_called_once_with(
-            model="gpt-4", messages=[{"role": "user", "content": "Hello"}]
+            model="gpt-5", messages=[{"role": "user", "content": "Hello"}]
         )
 
         # Verify tracking was called
@@ -179,7 +180,7 @@ class TestAsyncTrackedChatCompletions:
 
         # Mock the response
         mock_response = Mock()
-        mock_response.model = "gpt-4"
+        mock_response.model = "gpt-5"
 
         # Mock the OpenAI completion call
         self.mock_openai_completions.create = AsyncMock(return_value=mock_response)
@@ -190,14 +191,14 @@ class TestAsyncTrackedChatCompletions:
 
         # Test the call with tracking disabled
         result = await completions.create(
-            model="gpt-4",
+            model="gpt-5",
             messages=[{"role": "user", "content": "Hello"}],
             track_usage=False,
         )
 
         # Verify OpenAI was called
         self.mock_openai_completions.create.assert_called_once_with(
-            model="gpt-4", messages=[{"role": "user", "content": "Hello"}]
+            model="gpt-5", messages=[{"role": "user", "content": "Hello"}]
         )
 
         # Verify tracking was NOT called
@@ -213,7 +214,7 @@ class TestAsyncTrackedChatCompletions:
 
         # Mock the response
         mock_response = Mock()
-        mock_response.model = "gpt-4"
+        mock_response.model = "gpt-5"
         mock_response.usage = Mock()
         mock_response.usage.prompt_tokens = 10
         mock_response.usage.completion_tokens = 15
@@ -228,7 +229,7 @@ class TestAsyncTrackedChatCompletions:
         with patch("cmdrdata_openai.async_client.logger") as mock_logger:
             # Test the call without customer_id
             result = await completions.create(
-                model="gpt-4", messages=[{"role": "user", "content": "Hello"}]
+                model="gpt-5", messages=[{"role": "user", "content": "Hello"}]
             )
 
             # Verify warning was logged
@@ -249,7 +250,7 @@ class TestAsyncTrackedChatCompletions:
 
         # Mock the response without usage data
         mock_response = Mock()
-        mock_response.model = "gpt-4"
+        mock_response.model = "gpt-5"
         mock_response.usage = None
 
         # Mock the OpenAI completion call
@@ -261,7 +262,7 @@ class TestAsyncTrackedChatCompletions:
 
         # Test the call
         result = await completions.create(
-            model="gpt-4",
+            model="gpt-5",
             messages=[{"role": "user", "content": "Hello"}],
             customer_id="test-customer",
         )

@@ -2,28 +2,29 @@
 Unit tests for retry logic and circuit breaker
 """
 
-import pytest
 import asyncio
 import time
-from unittest.mock import Mock, patch
 from datetime import datetime
+from unittest.mock import Mock, patch
 
+import pytest
+
+from cmdrdata_openai.exceptions import (
+    CircuitBreakerError,
+    NetworkError,
+    RetryExhaustedError,
+    TimeoutError,
+)
 from cmdrdata_openai.retry import (
-    RetryPolicy,
-    RetryConfig,
-    CircuitBreaker,
-    CircuitBreakerState,
-    retry_with_backoff,
-    DEFAULT_RETRY_CONFIG,
     AGGRESSIVE_RETRY_CONFIG,
     CONSERVATIVE_RETRY_CONFIG,
     DEFAULT_CIRCUIT_BREAKER,
-)
-from cmdrdata_openai.exceptions import (
-    RetryExhaustedError,
-    CircuitBreakerError,
-    NetworkError,
-    TimeoutError,
+    DEFAULT_RETRY_CONFIG,
+    CircuitBreaker,
+    CircuitBreakerState,
+    RetryConfig,
+    RetryPolicy,
+    retry_with_backoff,
 )
 
 

@@ -1,22 +1,118 @@
+# Pre-commit hooks for cmdrdata-openai
+# Install: pip install pre-commit (or uv add --dev pre-commit)
+# Setup: pre-commit install
+# Run manually: pre-commit run --all-files
+# Skip hooks: git commit --no-verify
+
 repos:
+  # Standard pre-commit hooks
   - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v4.5.0
+    rev: v4.6.0
     hooks:
       - id: trailing-whitespace
+        files: '\.(py|yaml|yml|md|txt)$'
       - id: end-of-file-fixer
+        files: '\.(py|yaml|yml|md|txt)$'
       - id: check-yaml
+        exclude: '^\.github/workflows/.*\.ya?ml$'
       - id: check-added-large-files
+        args: ['--maxkb=1000']
+      - id: check-case-conflict
       - id: check-merge-conflict
-      - id: debug-statements
+      - id: check-toml
+      - id: debug-statements  # Check for debugger imports
+      - id: mixed-line-ending
+        args: ['--fix=lf']  # Unix line endings
 
+  # Black - Python code formatter
   - repo: https://github.com/psf/black
-    rev: 23.12.1
+    rev: 24.8.0
     hooks:
       - id: black
-        language_version: python3
+        language_version: python3.11
+        args: ['--line-length=88']
+        files: '^(cmdrdata_openai|tests)/.*\.py$'
 
+  # isort - Python import sorter
   - repo: https://github.com/pycqa/isort
     rev: 5.13.2
     hooks:
       - id: isort
-        args: ["--profile", "black"]
+        args: ['--profile', 'black', '--line-length', '88']
+        files: '^(cmdrdata_openai|tests)/.*\.py$'
+
+  # Flake8 - Python linter
+  - repo: https://github.com/pycqa/flake8
+    rev: 7.1.1
+    hooks:
+      - id: flake8
+        args: [
+          '--max-line-length=88',
+          '--extend-ignore=E203,W503,E501',  # Black compatibility + line length
+          '--exclude=.git,__pycache__,build,dist,*.egg-info'
+        ]
+        files: '^(cmdrdata_openai|tests)/.*\.py$'
+
+  # Local hooks for tests and validation
+  - repo: local
+    hooks:
+      # Quick validation tests (runs on commit)
+      - id: pytest-quick
+        name: Quick Validation Tests
+        entry: 'uv run pytest tests/test_validation.py tests/test_context.py -xvs --tb=short'
+        language: system
+        pass_filenames: false
+        stages: [commit]
+        verbose: true
+        description: "Runs a subset of fast unit tests before commit"
+
+      # Full test suite (optional - runs on push or manual)
+      - id: pytest-full
+        name: Full Test Suite
+        entry: 'uv run pytest tests/ --tb=short -q'
+        language: system
+        pass_filenames: false
+        stages: [push]
+        verbose: true
+        description: "Runs complete test suite before push"
+
+      # Check that black was run
+      - id: black-check
+        name: Check Black Formatting
+        entry: 'uv run black --check cmdrdata_openai/ tests/'
+        language: system
+        pass_filenames: false
+        stages: [commit]
+        description: "Verifies code is formatted with black"
+
+      # Check that isort was run
+      - id: isort-check
+        name: Check Import Sorting
+        entry: 'uv run isort --check-only cmdrdata_openai/ tests/'
+        language: system
+        pass_filenames: false
+        stages: [commit]
+        description: "Verifies imports are sorted with isort"
+
+      # Verify no print statements in production code
+      - id: no-print-statements
+        name: No Print Statements
+        entry: 'grep -r "^[^#]*print(" cmdrdata_openai/ --include="*.py" | grep -v "# noqa" || true'
+        language: system
+        pass_filenames: false
+        files: '^cmdrdata_openai/.*\.py$'
+        description: "Ensures no print statements in production code"
+
+      # Check version consistency
+      - id: check-version
+        name: Check Version Consistency
+        entry: 'grep "^version = " pyproject.toml'
+        language: system
+        pass_filenames: false
+        files: '^pyproject\.toml$'
+        description: "Verifies version is set in pyproject.toml"
+
+# Configuration
+default_stages: [commit]  # Which hooks run by default
+fail_fast: false  # Continue running hooks even if one fails
+verbose: false  # Set to true for debugging

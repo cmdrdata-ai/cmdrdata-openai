@@ -2,13 +2,14 @@
 Unit tests for TrackedOpenAI client
 """
 
-import pytest
 import os
-from unittest.mock import Mock, patch, MagicMock
 from datetime import datetime
+from unittest.mock import MagicMock, Mock, patch
+
+import pytest
 
 from cmdrdata_openai import TrackedOpenAI
-from cmdrdata_openai.exceptions import ValidationError, ConfigurationError
+from cmdrdata_openai.exceptions import ConfigurationError, ValidationError
 from cmdrdata_openai.tracker import UsageTracker
 
 
@@ -111,8 +112,9 @@ class TestTrackedOpenAI:
 
     def test_compatibility_check_warning(self):
         """Test compatibility warning mechanism"""
-        from cmdrdata_openai.version_compat import VersionCompatibility
         import warnings
+
+        from cmdrdata_openai.version_compat import VersionCompatibility
 
         # Test with a version that should trigger a warning
         with warnings.catch_warnings(record=True) as w:
@@ -224,7 +226,7 @@ class TestTrackedOpenAIIntegration:
 
         # Mock the chat completion response
         mock_response = Mock()
-        mock_response.model = "gpt-4"
+        mock_response.model = "gpt-5"
         mock_response.usage = Mock()
         mock_response.usage.prompt_tokens = 10
         mock_response.usage.completion_tokens = 15
@@ -245,14 +247,14 @@ class TestTrackedOpenAIIntegration:
 
         # Make a tracked call
         result = client.chat.completions.create(
-            model="gpt-4",
+            model="gpt-5",
             messages=[{"role": "user", "content": "Hello"}],
             customer_id="test-customer",
         )
 
         # Verify the OpenAI method was called
         mock_openai_instance.chat.completions.create.assert_called_once_with(
-            model="gpt-4", messages=[{"role": "user", "content": "Hello"}]
+            model="gpt-5", messages=[{"role": "user", "content": "Hello"}]
         )
 
         # Verify the response is returned
@@ -260,7 +262,6 @@ class TestTrackedOpenAIIntegration:
 
         # Verify tracking was attempted (the actual tracking logic is tested separately)
         assert mock_tracker_instance.track_usage_background.called
-
 
 
 if __name__ == "__main__":

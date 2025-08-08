@@ -2,11 +2,12 @@
 Pytest configuration and shared fixtures
 """
 
-import pytest
-import os
 import logging
-from unittest.mock import Mock, patch
+import os
 from datetime import datetime, timedelta
+from unittest.mock import Mock, patch
+
+import pytest
 
 # Configure logging for tests
 logging.basicConfig(level=logging.WARNING)
@@ -16,7 +17,7 @@ logging.basicConfig(level=logging.WARNING)
 def mock_openai_response():
     """Mock OpenAI API response"""
     response = Mock()
-    response.model = "gpt-4"
+    response.model = "gpt-5"
     response.id = "chatcmpl-test123"
     response.created = 1234567890
     response.system_fingerprint = "fp_test"

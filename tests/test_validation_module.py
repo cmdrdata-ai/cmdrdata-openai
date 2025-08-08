@@ -47,7 +47,9 @@ class TestInputValidator:
             "sk-expression(alert)" + "a" * 27,
         ]
         for key in malicious_keys:
-            with pytest.raises(SecurityError, match="API key contains suspicious pattern"):
+            with pytest.raises(
+                SecurityError, match="API key contains suspicious pattern"
+            ):
                 InputValidator.validate_api_key(key, "openai")
 
     def test_validate_api_key_invalid_format(self):
@@ -63,18 +65,24 @@ class TestInputValidator:
 
     def test_validate_customer_id_empty(self):
         """Test customer ID validation with empty string"""
-        with pytest.raises(ValidationError, match="Customer ID must be a non-empty string"):
+        with pytest.raises(
+            ValidationError, match="Customer ID must be a non-empty string"
+        ):
             InputValidator.validate_customer_id("")
 
     def test_validate_customer_id_none(self):
         """Test customer ID validation with None"""
-        with pytest.raises(ValidationError, match="Customer ID must be a non-empty string"):
+        with pytest.raises(
+            ValidationError, match="Customer ID must be a non-empty string"
+        ):
             InputValidator.validate_customer_id(None)
 
     def test_validate_customer_id_too_long(self):
         """Test customer ID validation with too long string"""
         long_id = "a" * 256
-        with pytest.raises(ValidationError, match="Customer ID must be 255 characters or less"):
+        with pytest.raises(
+            ValidationError, match="Customer ID must be 255 characters or less"
+        ):
             InputValidator.validate_customer_id(long_id)
 
     def test_validate_customer_id_suspicious_patterns(self):
@@ -86,7 +94,9 @@ class TestInputValidator:
             'onclick="alert(1)"',
         ]
         for customer_id in malicious_ids:
-            with pytest.raises(SecurityError, match="Customer ID contains suspicious pattern"):
+            with pytest.raises(
+                SecurityError, match="Customer ID contains suspicious pattern"
+            ):
                 InputValidator.validate_customer_id(customer_id)
 
     def test_validate_customer_id_invalid_characters(self):
@@ -118,14 +128,22 @@ class TestInputValidator:
 
     def test_validate_url_invalid_scheme(self):
         """Test URL validation with invalid scheme"""
-        invalid_urls = ["ftp://example.com", "file:///etc/passwd", "javascript:alert(1)"]
+        invalid_urls = [
+            "ftp://example.com",
+            "file:///etc/passwd",
+            "javascript:alert(1)",
+        ]
         for url in invalid_urls:
-            with pytest.raises(ValidationError, match="URL must use HTTP or HTTPS protocol"):
+            with pytest.raises(
+                ValidationError, match="URL must use HTTP or HTTPS protocol"
+            ):
                 InputValidator.validate_url(url)
 
     def test_validate_url_malformed(self):
         """Test URL validation with malformed URL"""
-        with pytest.raises(ValidationError, match="URL must use HTTP or HTTPS protocol"):
+        with pytest.raises(
+            ValidationError, match="URL must use HTTP or HTTPS protocol"
+        ):
             InputValidator.validate_url("not a valid url")
 
     def test_validate_url_suspicious_patterns(self):
@@ -166,18 +184,29 @@ class TestInputValidator:
 
     def test_validate_model_name_success(self):
         """Test successful model name validation"""
-        valid_models = ["gpt-4", "gpt-3.5-turbo", "text-davinci-003", "claude-3-opus"]
+        valid_models = [
+            "gpt-5",
+            "gpt-4o",
+            "gpt-4",
+            "gpt-3.5-turbo",
+            "text-davinci-003",
+            "claude-3-opus",
+        ]
         for model in valid_models:
             assert InputValidator.validate_model_name(model) is True
 
     def test_validate_model_name_empty(self):
         """Test model name validation with empty string"""
-        with pytest.raises(ValidationError, match="Model name must be a non-empty string"):
+        with pytest.raises(
+            ValidationError, match="Model name must be a non-empty string"
+        ):
             InputValidator.validate_model_name("")
 
     def test_validate_model_name_none(self):
         """Test model name validation with None"""
-        with pytest.raises(ValidationError, match="Model name must be a non-empty string"):
+        with pytest.raises(
+            ValidationError, match="Model name must be a non-empty string"
+        ):
             InputValidator.validate_model_name(None)
 
     def test_validate_model_name_suspicious_patterns(self):
@@ -187,7 +216,9 @@ class TestInputValidator:
             "javascript:alert(1)",
         ]
         for model in malicious_models:
-            with pytest.raises(SecurityError, match="Model name contains suspicious pattern"):
+            with pytest.raises(
+                SecurityError, match="Model name contains suspicious pattern"
+            ):
                 InputValidator.validate_model_name(model)
 
     def test_validate_model_name_invalid_characters(self):
@@ -247,13 +278,17 @@ class TestInputValidator:
     def test_validate_metadata_suspicious_keys(self):
         """Test metadata validation with suspicious keys"""
         malicious_metadata = {"<script>alert('xss')</script>": "value"}
-        with pytest.raises(SecurityError, match="Metadata key contains suspicious pattern"):
+        with pytest.raises(
+            SecurityError, match="Metadata key contains suspicious pattern"
+        ):
             InputValidator.validate_metadata(malicious_metadata)
 
     def test_validate_metadata_suspicious_values(self):
         """Test metadata validation with suspicious values"""
         malicious_metadata = {"key": "<script>alert('xss')</script>"}
-        with pytest.raises(SecurityError, match="Metadata value contains suspicious pattern"):
+        with pytest.raises(
+            SecurityError, match="Metadata value contains suspicious pattern"
+        ):
             InputValidator.validate_metadata(malicious_metadata)
 
     def test_sanitize_string_success(self):
@@ -297,7 +332,9 @@ class TestInputValidator:
     def test_validate_chat_messages_missing_role(self):
         """Test chat messages validation with missing role"""
         messages = [{"content": "Hello"}]
-        with pytest.raises(ValidationError, match="Message 0 missing required 'role' field"):
+        with pytest.raises(
+            ValidationError, match="Message 0 missing required 'role' field"
+        ):
             InputValidator.validate_chat_messages(messages)
 
     def test_validate_chat_messages_invalid_role(self):
@@ -309,7 +346,9 @@ class TestInputValidator:
     def test_validate_chat_messages_missing_content(self):
         """Test chat messages validation with missing content"""
         messages = [{"role": "user"}]
-        with pytest.raises(ValidationError, match="Message 0 missing required 'content' field"):
+        with pytest.raises(
+            ValidationError, match="Message 0 missing required 'content' field"
+        ):
             InputValidator.validate_chat_messages(messages)
 
     def test_validate_chat_messages_invalid_content_type(self):
@@ -321,7 +360,9 @@ class TestInputValidator:
     def test_validate_chat_messages_suspicious_content(self):
         """Test chat messages validation with suspicious content"""
         messages = [{"role": "user", "content": "<script>alert('xss')</script>"}]
-        with pytest.raises(SecurityError, match="Message 0 content contains suspicious pattern"):
+        with pytest.raises(
+            SecurityError, match="Message 0 content contains suspicious pattern"
+        ):
             InputValidator.validate_chat_messages(messages)
 
 
@@ -379,5 +420,7 @@ class TestValidateInputDecorator:
         def process_value(value):
             return value
 
-        with pytest.raises(ValidationError, match="Validation failed: Unexpected error"):
+        with pytest.raises(
+            ValidationError, match="Validation failed: Unexpected error"
+        ):
             process_value("test")

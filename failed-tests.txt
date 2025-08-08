@@ -1,0 +1,20 @@
+tests/test_client.py::TestTrackedOpenAI::test_compatibility_check_warning FAILED [ 10%]
+tests/test_proxy.py::TestTrackedProxy::test_wrap_method_exception_handling FAILED [ 44%]
+tests/test_tracker.py::TestUsageTracker::test_initialization_default_values FAILED [ 72%]
+tests/test_tracker.py::TestUsageTracker::test_sanitize_tracking_data FAILED [ 73%]
+tests/test_tracker.py::TestUsageTracker::test_track_usage_with_retry_rate_limited FAILED [ 75%]
+tests/test_tracker.py::TestUsageTracker::test_track_usage_with_retry_server_error FAILED [ 75%]
+tests/test_tracker.py::TestUsageTracker::test_track_usage_with_retry_client_error FAILED [ 75%]
+tests/test_tracker.py::TestUsageTracker::test_track_usage_no_retry_on_client_error FAILED [ 76%]
+tests/test_tracker.py::TestUsageTrackerIntegration::test_full_tracking_flow_success FAILED [ 79%]
+tests/test_version_compat.py::test_compatibility_with_fallback_version FAILED [100%]
+FAILED tests/test_client.py::TestTrackedOpenAI::test_compatibility_check_warning
+FAILED tests/test_proxy.py::TestTrackedProxy::test_wrap_method_exception_handling
+FAILED tests/test_tracker.py::TestUsageTracker::test_initialization_default_values
+FAILED tests/test_tracker.py::TestUsageTracker::test_sanitize_tracking_data
+FAILED tests/test_tracker.py::TestUsageTracker::test_track_usage_with_retry_rate_limited
+FAILED tests/test_tracker.py::TestUsageTracker::test_track_usage_with_retry_server_error
+FAILED tests/test_tracker.py::TestUsageTracker::test_track_usage_with_retry_client_error
+FAILED tests/test_tracker.py::TestUsageTracker::test_track_usage_no_retry_on_client_error
+FAILED tests/test_tracker.py::TestUsageTrackerIntegration::test_full_tracking_flow_success
+FAILED tests/test_version_compat.py::test_compatibility_with_fallback_version
