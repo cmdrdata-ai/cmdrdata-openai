@@ -366,7 +366,7 @@ class TestTrackingFunctions:
             call_kwargs = self.mock_tracker.track_usage_background.call_args[1]
 
             assert call_kwargs["customer_id"] == "test-customer"
-            assert call_kwargs["model"] == "gpt-4"
+            assert call_kwargs["model"] == "gpt-5"
             assert call_kwargs["input_tokens"] == 10
             assert call_kwargs["output_tokens"] == 15
             assert call_kwargs["provider"] == "openai"
@@ -626,7 +626,7 @@ class TestTrackingFunctions:
         # Set up fine-tuning job response
         mock_ft_result = Mock()
         mock_ft_result.id = "ftjob-123"
-        mock_ft_result.model = "gpt-3.5-turbo"
+        mock_ft_result.model = "gpt-5"
         mock_ft_result.training_file = "file-123"
         mock_ft_result.status = "queued"
         mock_ft_result.created_at = 1234567890
@@ -642,7 +642,7 @@ class TestTrackingFunctions:
                 tracker=self.mock_tracker,
                 method_name="fine_tuning.jobs.create",
                 args=(),
-                kwargs={"training_file": "file-123", "model": "gpt-3.5-turbo"},
+                kwargs={"training_file": "file-123", "model": "gpt-5"},
             )
 
             # Verify tracker was called
@@ -667,7 +667,7 @@ class TestTrackingFunctions:
         mock_run_result.assistant_id = "asst_123"
         mock_run_result.thread_id = "thread_123"
         mock_run_result.status = "queued"
-        mock_run_result.model = "gpt-4"
+        mock_run_result.model = "gpt-5"
         mock_run_result.usage = Mock()
         mock_run_result.usage.prompt_tokens = 50
         mock_run_result.usage.completion_tokens = 100
@@ -692,7 +692,7 @@ class TestTrackingFunctions:
             call_kwargs = self.mock_tracker.track_usage_background.call_args[1]
 
             assert call_kwargs["customer_id"] == "test-customer"
-            assert call_kwargs["model"] == "gpt-4"
+            assert call_kwargs["model"] == "gpt-5"
             assert call_kwargs["input_tokens"] == 50
             assert call_kwargs["output_tokens"] == 100
             assert call_kwargs["provider"] == "openai"

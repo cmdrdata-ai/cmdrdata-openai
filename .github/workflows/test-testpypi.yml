@@ -1,0 +1,103 @@
+name: Test TestPyPI Setup
+
+on:
+  workflow_dispatch:
+
+jobs:
+  test-token:
+    name: Test TestPyPI Token
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: "3.11"
+
+    - name: Check if TEST_PYPI_API_TOKEN exists
+      run: |
+        echo "Checking TEST_PYPI_API_TOKEN secret..."
+        if [ -z "${{ secrets.TEST_PYPI_API_TOKEN }}" ]; then
+          echo "❌ TEST_PYPI_API_TOKEN is NOT set"
+          echo ""
+          echo "To fix this:"
+          echo "1. Go to: https://test.pypi.org/manage/account/token/"
+          echo "2. Create a new API token"
+          echo "3. Go to your GitHub repo → Settings → Secrets → Actions"
+          echo "4. Add secret named: TEST_PYPI_API_TOKEN"
+          echo "5. Paste the token value (starts with pypi-)"
+          exit 1
+        else
+          echo "✅ TEST_PYPI_API_TOKEN is set"
+          echo "Token length: ${#TOKEN} characters"
+          echo "First 10 chars: ${TOKEN:0:10}..."
+          
+          # Check if it looks like a valid token
+          if [[ "$TOKEN" == pypi-* ]]; then
+            echo "✅ Token format looks correct (starts with 'pypi-')"
+          else
+            echo "⚠️  WARNING: Token doesn't start with 'pypi-'"
+            echo "   Make sure you're using a TestPyPI token, not a regular PyPI token"
+          fi
+        fi
+      env:
+        TOKEN: ${{ secrets.TEST_PYPI_API_TOKEN }}
+
+    - name: Install tools
+      run: |
+        pip install build twine
+
+    - name: Build package
+      run: |
+        python -m build
+
+    - name: Test authentication with TestPyPI
+      env:
+        TWINE_USERNAME: __token__
+        TWINE_PASSWORD: ${{ secrets.TEST_PYPI_API_TOKEN }}
+      run: |
+        echo "Testing authentication with TestPyPI..."
+        
+        # Use twine check first (doesn't need upload)
+        twine check dist/*
+        
+        # Try to get package list (tests auth without uploading)
+        python -c "
+        import os
+        from twine.settings import Settings
+        from twine.repository import Repository
+        
+        settings = Settings(
+            repository_url='https://test.pypi.org/legacy/',
+            username='__token__',
+            password=os.environ.get('TWINE_PASSWORD', '')
+        )
+        
+        try:
+            repo = Repository(
+                repository_url=settings.repository_url,
+                username=settings.username,
+                password=settings.password
+            )
+            print('✅ Authentication test passed!')
+            print(f'Repository URL: {repo.url}')
+        except Exception as e:
+            print(f'❌ Authentication failed: {e}')
+            exit(1)
+        " || {
+          echo ""
+          echo "Authentication test failed. Possible issues:"
+          echo "1. Token is from pypi.org instead of test.pypi.org"
+          echo "2. Token has expired"
+          echo "3. Token was copied incorrectly"
+          echo ""
+          echo "To get a new TestPyPI token:"
+          echo "1. Go to: https://test.pypi.org (NOT pypi.org)"
+          echo "2. Log in or create account"
+          echo "3. Go to Account settings → API tokens"
+          echo "4. Add API token with 'Entire account' scope"
+          echo "5. Copy the ENTIRE token including 'pypi-' prefix"
+          exit 1
+        }

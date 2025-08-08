@@ -21,7 +21,7 @@ Quick Start:
     )
 
     response = client.chat.completions.create(
-        model="gpt-4",
+        model="gpt-5",  # Supports GPT-5, GPT-4o, GPT-4, etc.
         messages=[{"role": "user", "content": "Hello!"}],
         customer_id="customer-123"
     )

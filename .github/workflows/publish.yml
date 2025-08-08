@@ -84,12 +84,24 @@ jobs:
         uv venv
         uv pip install twine
 
+    - name: Debug - Check if token is set
+      run: |
+        if [ -z "${{ secrets.TEST_PYPI_API_TOKEN }}" ]; then
+          echo "ERROR: TEST_PYPI_API_TOKEN secret is not set!"
+          echo "Please add TEST_PYPI_API_TOKEN secret in GitHub repository settings"
+          exit 1
+        else
+          echo "TEST_PYPI_API_TOKEN is set (length: ${#TOKEN})"
+        fi
+      env:
+        TOKEN: ${{ secrets.TEST_PYPI_API_TOKEN }}
+
     - name: Publish to TestPyPI
       env:
         TWINE_USERNAME: __token__
         TWINE_PASSWORD: ${{ secrets.TEST_PYPI_API_TOKEN }}
       run: |
-        uv run twine upload --repository testpypi dist/*
+        uv run twine upload --repository testpypi dist/* --verbose
 
   publish-to-pypi:
     name: Publish to PyPI

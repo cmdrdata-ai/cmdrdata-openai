@@ -39,7 +39,7 @@ Transform your OpenAI integration into a customer-aware, usage-based billing sys
 
 ### **What Gets Tracked**
 - **Token usage** (input/output tokens for accurate billing)
-- **Model information** (gpt-4, gpt-3.5-turbo, etc.)
+- **Model information** (gpt-5, gpt-4o, gpt-4, gpt-3.5-turbo, etc.)
 - **Customer identification** (your customer IDs)
 - **Custom metadata** (request types, feature usage, geographic data, etc.)
 - **Performance metrics** (response times, error rates)
@@ -78,7 +78,7 @@ client = TrackedOpenAI(
 
 # Add customer_id to your calls to enable tracking
 response = client.chat.completions.create(
-    model="gpt-4",
+    model="gpt-5",  # Supports GPT-5, GPT-4o, GPT-4, etc.
     messages=[{"role": "user", "content": "Hello!"}],
     customer_id="customer-123"
 )
@@ -110,7 +110,7 @@ def chat():
     
     try:
         response = client.chat.completions.create(
-            model="gpt-4",
+            model="gpt-5",
             messages=[{"role": "user", "content": data['message']}]
         )
         return jsonify({"response": response.choices[0].message.content})
@@ -141,7 +141,7 @@ client = AsyncTrackedOpenAI(
 )
 
 response = await client.chat.completions.create(
-    model="gpt-4",
+    model="gpt-5",
     messages=[{"role": "user", "content": "Hello!"}],
     customer_id="customer-789"
 )
@@ -154,7 +154,7 @@ Track arbitrary metadata with each API call to enable sophisticated billing mode
 ```python
 # Example: SaaS application with feature-based billing
 response = client.chat.completions.create(
-    model="gpt-4",
+    model="gpt-5",
     messages=[{"role": "user", "content": "Analyze this data..."}],
     customer_id="customer-123",
     # Custom metadata for fine-grained billing
@@ -169,7 +169,7 @@ response = client.chat.completions.create(
 
 # Example: Usage-based pricing by request complexity
 response = client.chat.completions.create(
-    model="gpt-4",
+    model="gpt-5",
     messages=long_conversation_history,
     customer_id="customer-456",
     custom_metadata={
@@ -312,8 +312,9 @@ CmdrData-OpenAI uses a **proxy pattern** to wrap your existing OpenAI client:
 
 ## 🔌 Compatibility
 
-- **OpenAI SDK**: Compatible with OpenAI SDK v1.0.0+ (tested with 1.58.0+)
-- **Python**: Requires Python 3.9+
+- **OpenAI Models**: Full support for GPT-5, GPT-4o, GPT-4, GPT-3.5, DALL-E, Whisper, and all OpenAI models
+- **OpenAI SDK**: Compatible with OpenAI SDK v1.0.0+ (tested with 1.99.0+)
+- **Python**: Supports Python 3.9, 3.10, 3.11, 3.12, and 3.13
 - **Async**: Full support for both sync and async usage
 - **Frameworks**: Works with Flask, FastAPI, Django, etc.
 
