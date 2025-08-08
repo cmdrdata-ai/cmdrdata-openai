@@ -629,7 +629,9 @@ def track_assistant_run(
 
         tracker.track_usage_background(
             customer_id=effective_customer_id,
-            model=kwargs.get("model", "gpt-5"),  # Assistants support GPT-5, GPT-4o, etc.
+            model=kwargs.get(
+                "model", "gpt-5"
+            ),  # Assistants support GPT-5, GPT-4o, etc.
             input_tokens=input_tokens,
             output_tokens=output_tokens,
             provider="openai",
