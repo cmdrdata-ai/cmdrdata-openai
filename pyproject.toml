@@ -4,15 +4,15 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "cmdrdata-openai"
-version = "0.2.0"
+version = "0.2.1"
 description = "Customer tracking and usage-based billing for OpenAI APIs with arbitrary metadata support"
 readme = "README.md"
 license = {file = "LICENSE"}
 authors = [
-    {name = "cmdrdata", email = "hello@cmdrdata.ai"}
+    {name = "cmdrdata", email = "terencenathan@gmail.com"}
 ]
 maintainers = [
-    {name = "cmdrdata", email = "hello@cmdrdata.ai"}
+    {name = "cmdrdata", email = "terencenathan@gmail.com"}
 ]
 keywords = [
     "openai", 
